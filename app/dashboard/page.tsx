@@ -189,20 +189,28 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Monthly Revenue Chart placeholder */}
+            {/* Monthly Revenue Chart */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-6">
                 <h2 className="font-semibold text-zinc-900 mb-4">Monthly Revenue</h2>
-                <div className="flex items-end gap-2 h-32">
+                <div className="flex items-end gap-1 h-32">
                     {reports.monthlyRevenue.map((m: any, i: number) => {
                         const max = Math.max(...reports.monthlyRevenue.map((x: any) => x.revenue), 1);
-                        const pct = max > 0 ? (m.revenue / max) * 100 : 0;
+                        const height = Math.max((m.revenue / max) * 128, m.revenue > 0 ? 4 : 2);
                         return (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                                <div className="w-full bg-orange-500 rounded-t-md transition-all" style={{ height: `${Math.max(pct, 2)}%` }} />
-                                <span className="text-[9px] text-zinc-400 rotate-45 origin-left hidden sm:block">{m.month}</span>
+                            <div key={i} className="flex-1 flex items-end justify-center group cursor-default"
+                                title={`${m.month}: ${formatCurrency(m.revenue)}`}>
+                                <div className="w-full bg-orange-400 group-hover:bg-orange-500 rounded-t-md transition-colors"
+                                    style={{ height: `${height}px` }} />
                             </div>
                         );
                     })}
+                </div>
+                <div className="flex items-center gap-1 mt-2">
+                    {reports.monthlyRevenue.map((m: any, i: number) => (
+                        <div key={i} className="flex-1 text-center">
+                            <span className="text-[9px] text-zinc-400">{m.month}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

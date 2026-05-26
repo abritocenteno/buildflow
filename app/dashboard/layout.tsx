@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import { UserButton } from "@/components/clerk-compat";
 import {
     Users,
     Truck,

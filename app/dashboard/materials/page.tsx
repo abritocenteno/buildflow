@@ -54,7 +54,8 @@ export default function MaterialsPage() {
                         {materials.map((m: any) => {
                             const isLow = m.reorderThreshold && m.quantity <= m.reorderThreshold;
                             return (
-                                <tr key={m._id} className={cn("hover:bg-zinc-50 transition-colors", isLow && "bg-amber-50/50")}>
+                                <tr key={m._id} className={cn("hover:bg-zinc-50 transition-colors cursor-pointer", isLow && "bg-amber-50/50")}
+                                    onClick={() => window.location.href = `/dashboard/materials/${m._id}`}>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
                                             {isLow && <AlertTriangle size={14} className="text-amber-500 flex-shrink-0" />}

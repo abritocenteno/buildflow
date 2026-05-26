@@ -26,6 +26,13 @@ export const list = query({
     },
 });
 
+export const listBySupplier = query({
+    args: { supplierId: v.id("suppliers") },
+    handler: async (ctx, { supplierId }) => {
+        return await ctx.db.query("orders").withIndex("by_supplier", (q: any) => q.eq("supplierId", supplierId)).collect();
+    },
+});
+
 export const get = query({
     args: { id: v.id("orders") },
     handler: async (ctx, { id }) => {

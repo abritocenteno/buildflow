@@ -58,6 +58,43 @@ export const update = mutation({
     },
 });
 
+export const listUnbilledByProject = query({
+    args: { projectId: v.id("projects") },
+    handler: async (ctx, { projectId }) => {
+        const entries = await ctx.db.query("timeEntries").withIndex("by_project", (q: any) => q.eq("projectId", projectId)).collect();
+        return entries.filter((e: any) => e.billable && !e.invoiced);
+    },
+});
+
+export const importToInvoice = mutation({
+    args: {
+        invoiceId: v.id("invoices"),
+        entryIds: v.array(v.id("timeEntries")),
+    },
+    handler: async (ctx, { invoiceId, entryIds }) => {
+        const invoice = await ctx.db.get(invoiceId);
+        if (!invoice) throw new Error("Invoice not found");
+
+        const entries = await Promise.all(entryIds.map((id) => ctx.db.get(id)));
+        const newItems = entries
+            .filter(Boolean)
+            .map((e: any) => {
+                const hours = Math.round((e.durationMinutes / 60) * 100) / 100;
+                return {
+                    name: e.workerName ? `Labor — ${e.workerName}` : "Labor",
+                    description: e.description || "Billable time",
+                    remark: new Date(e.date).toLocaleDateString("en-IE"),
+                    amount: Math.max(1, Math.round(hours)),
+                    unitPrice: e.hourlyRate ?? 0,
+                };
+            });
+
+        const existing = (invoice as any).items ?? [];
+        await ctx.db.patch(invoiceId, { items: [...existing, ...newItems] });
+        await Promise.all(entryIds.map((id) => ctx.db.patch(id, { invoiced: true })));
+    },
+});
+
 export const remove = mutation({
     args: { id: v.id("timeEntries") },
     handler: async (ctx, { id }) => {

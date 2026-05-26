@@ -56,3 +56,35 @@ export const overview = query({
         };
     },
 });
+
+export const projectProfitability = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await getUserId(ctx);
+        const projects = await ctx.db.query("projects").withIndex("by_user", (q: any) => q.eq("userId", userId)).collect();
+        return await Promise.all(
+            projects.filter((p: any) => p.status !== "closed").map(async (p: any) => {
+                const client = await ctx.db.get(p.clientId);
+                const invoices = await ctx.db.query("invoices").withIndex("by_project", (q: any) => q.eq("projectId", p._id)).collect();
+                const invoiced = invoices.reduce((s: number, i: any) => s + i.amount, 0);
+                const paid = invoices.filter((i: any) => i.status === "paid").reduce((s: number, i: any) => s + i.amount, 0);
+                return { _id: p._id, title: p.title, status: p.status, estimatedBudget: p.estimatedBudget ?? 0, actualCost: p.actualCost ?? 0, invoiced, paid, clientName: (client as any)?.name ?? "—" };
+            })
+        );
+    },
+});
+
+export const clientRevenue = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await getUserId(ctx);
+        const clients = await ctx.db.query("clients").withIndex("by_user", (q: any) => q.eq("userId", userId)).collect();
+        const results = await Promise.all(clients.map(async (c: any) => {
+            const invoices = await ctx.db.query("invoices").withIndex("by_client", (q: any) => q.eq("clientId", c._id)).collect();
+            const paid = invoices.filter((i: any) => i.status === "paid").reduce((s: number, i: any) => s + i.amount, 0);
+            const outstanding = invoices.filter((i: any) => !["paid", "cancelled"].includes(i.status)).reduce((s: number, i: any) => s + i.amount, 0);
+            return { _id: c._id, name: c.name, paid, outstanding };
+        }));
+        return results.filter((c) => c.paid + c.outstanding > 0).sort((a, b) => (b.paid + b.outstanding) - (a.paid + a.outstanding));
+    },
+});

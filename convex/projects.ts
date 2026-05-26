@@ -99,6 +99,19 @@ export const updateStatus = mutation({
     },
 });
 
+export const listBySubcontractor = query({
+    args: { subcontractorId: v.id("subcontractors") },
+    handler: async (ctx, { subcontractorId }) => {
+        const userId = await getUserId(ctx);
+        const projects = await ctx.db.query("projects").withIndex("by_user", (q: any) => q.eq("userId", userId)).collect();
+        const filtered = projects.filter((p: any) => Array.isArray(p.subcontractorIds) && p.subcontractorIds.includes(subcontractorId));
+        return await Promise.all(filtered.map(async (p: any) => {
+            const client = await ctx.db.get(p.clientId);
+            return { ...p, client };
+        }));
+    },
+});
+
 export const remove = mutation({
     args: { id: v.id("projects") },
     handler: async (ctx, { id }) => {

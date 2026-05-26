@@ -1,50 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { use, Suspense, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { motion, AnimatePresence } from "motion/react";
 import {
-    ArrowLeft, Building2, Loader2, AlertCircle, Mail, Phone, Globe,
-    MapPin, FolderKanban, FileText, Pencil, Trash2, Plus, X,
-    CheckCircle2, User, ChevronRight, TrendingUp, Clock,
+    ArrowLeft, HardHat, Loader2, AlertCircle, AlertTriangle,
+    Mail, Phone, Globe, MapPin, FileText, Shield, FolderKanban,
+    Pencil, Trash2, Plus, X, ChevronRight, User, CheckCircle2,
+    Calendar,
 } from "lucide-react";
-import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
-const CLIENT_TYPES = ["individual", "business", "developer", "contractor"] as const;
+const TRADES = ["electrical", "plumbing", "hvac", "carpentry", "masonry", "roofing", "painting", "tiling", "other"];
 
-const INV_BADGE: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-700",
-    paid: "bg-emerald-50 text-emerald-700",
-    overdue: "bg-red-50 text-red-700",
-    cancelled: "bg-zinc-100 text-zinc-500",
+const TRADE_COLORS: Record<string, string> = {
+    electrical: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    plumbing: "bg-blue-50 text-blue-700 border-blue-200",
+    hvac: "bg-cyan-50 text-cyan-700 border-cyan-200",
+    carpentry: "bg-amber-50 text-amber-700 border-amber-200",
+    masonry: "bg-stone-100 text-stone-700 border-stone-200",
+    roofing: "bg-slate-100 text-slate-700 border-slate-200",
+    painting: "bg-purple-50 text-purple-700 border-purple-200",
+    tiling: "bg-teal-50 text-teal-700 border-teal-200",
+    other: "bg-zinc-100 text-zinc-600 border-zinc-200",
 };
 
-const PROJ_BADGE: Record<string, string> = {
-    planning: "bg-zinc-100 text-zinc-600",
-    permitting: "bg-blue-100 text-blue-700",
-    in_progress: "bg-orange-100 text-orange-700",
-    punch_list: "bg-amber-100 text-amber-700",
-    completed: "bg-emerald-100 text-emerald-700",
-    closed: "bg-zinc-200 text-zinc-500",
+const PROJECT_STATUS_BADGE: Record<string, string> = {
+    planning: "bg-blue-50 text-blue-700",
+    active: "bg-emerald-50 text-emerald-700",
+    "on-hold": "bg-amber-50 text-amber-700",
+    completed: "bg-zinc-100 text-zinc-500",
 };
+
+function insuranceStatus(ts?: number): "ok" | "expiring" | "expired" | "none" {
+    if (!ts) return "none";
+    const now = Date.now();
+    const diff = ts - now;
+    if (diff < 0) return "expired";
+    if (diff < 30 * 24 * 60 * 60 * 1000) return "expiring";
+    return "ok";
+}
 
 const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 transition-all";
 
-export default function ClientDetailPage() {
-    const { id } = useParams<{ id: string }>();
+function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
     const router = useRouter();
-    const client = useQuery(api.clients.get, { id: id as Id<"clients"> });
-    const contacts = useQuery(api.contacts.listByClient, { clientId: id as Id<"clients"> }) ?? [];
-    const settings = useQuery(api.settings.get);
-    const projects = useQuery(api.projects.list) ?? [];
-    const invoices = useQuery(api.invoices.list) ?? [];
+    const sub = useQuery(api.subcontractors.get, { id });
+    const contacts = useQuery(api.contacts.listBySubcontractor, { subcontractorId: id }) ?? [];
+    const projects = useQuery(api.projects.listBySubcontractor, { subcontractorId: id }) ?? [];
 
-    const updateClient = useMutation(api.clients.update);
-    const removeClient = useMutation(api.clients.remove);
+    const updateSub = useMutation(api.subcontractors.update);
+    const removeSub = useMutation(api.subcontractors.remove);
     const createContact = useMutation(api.contacts.create);
     const updateContact = useMutation(api.contacts.update);
     const removeContact = useMutation(api.contacts.remove);
@@ -53,28 +63,36 @@ export default function ClientDetailPage() {
     const [showAddContact, setShowAddContact] = useState(false);
     const [editContact, setEditContact] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
+
     const [editForm, setEditForm] = useState<any>(null);
     const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", role: "" });
 
     const openEdit = () => {
-        if (!client) return;
+        if (!sub) return;
         setEditForm({
-            name: client.name, email: client.email, type: (client as any).type ?? "business",
-            phone: (client as any).phone ?? "", website: (client as any).website ?? "",
-            street: (client as any).street ?? "", city: (client as any).city ?? "", postcode: (client as any).postcode ?? "",
+            name: sub.name, trade: sub.trade, email: sub.email,
+            phone: sub.phone ?? "", website: (sub as any).website ?? "",
+            street: sub.street ?? "", postcode: sub.postcode ?? "", city: sub.city ?? "",
+            licenseNumber: sub.licenseNumber ?? "",
+            insuranceExpiry: sub.insuranceExpiry ? new Date(sub.insuranceExpiry).toISOString().split("T")[0] : "",
+            notes: sub.notes ?? "",
         });
         setShowEdit(true);
     };
 
-    const handleUpdateClient = async (e: React.FormEvent) => {
+    const handleUpdateSub = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         try {
-            await updateClient({
-                id: id as Id<"clients">,
-                name: editForm.name, email: editForm.email, type: editForm.type,
+            await updateSub({
+                id,
+                name: editForm.name, trade: editForm.trade, email: editForm.email,
                 phone: editForm.phone || undefined, website: editForm.website || undefined,
-                street: editForm.street || undefined, city: editForm.city || undefined, postcode: editForm.postcode || undefined,
+                street: editForm.street || undefined, postcode: editForm.postcode || undefined,
+                city: editForm.city || undefined,
+                licenseNumber: editForm.licenseNumber || undefined,
+                insuranceExpiry: editForm.insuranceExpiry ? new Date(editForm.insuranceExpiry).getTime() : undefined,
+                notes: editForm.notes || undefined,
             });
             setShowEdit(false);
         } finally {
@@ -86,7 +104,7 @@ export default function ClientDetailPage() {
         e.preventDefault();
         setIsSaving(true);
         try {
-            await createContact({ clientId: id as Id<"clients">, name: contactForm.name, email: contactForm.email || undefined, phone: contactForm.phone || undefined, role: contactForm.role || undefined });
+            await createContact({ subcontractorId: id, name: contactForm.name, email: contactForm.email || undefined, phone: contactForm.phone || undefined, role: contactForm.role || undefined });
             setContactForm({ name: "", email: "", phone: "", role: "" });
             setShowAddContact(false);
         } finally {
@@ -106,26 +124,22 @@ export default function ClientDetailPage() {
     };
 
     const handleDelete = async () => {
-        if (!confirm("Delete this client? This cannot be undone.")) return;
-        await removeClient({ id: id as Id<"clients"> });
-        router.push("/dashboard/clients");
+        if (!confirm("Delete this subcontractor? This cannot be undone.")) return;
+        await removeSub({ id });
+        router.push("/dashboard/subcontractors");
     };
 
-    if (client === undefined) return <div className="flex items-center justify-center py-32"><Loader2 className="animate-spin text-zinc-300" size={32} /></div>;
-    if (client === null) return (
+    if (sub === undefined) return <div className="flex items-center justify-center py-32"><Loader2 className="animate-spin text-zinc-300" size={32} /></div>;
+    if (sub === null) return (
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
-            <h2 className="text-xl font-bold">Client not found</h2>
+            <h2 className="text-xl font-bold">Subcontractor not found</h2>
             <button onClick={() => router.back()} className="text-sm text-orange-500 hover:underline">Go back</button>
         </div>
     );
 
-    const clientProjects = projects.filter((p: any) => p.clientId === id);
-    const clientInvoices = invoices.filter((i: any) => i.clientId === id);
-    const totalRevenue = clientInvoices.filter((i: any) => i.status === "paid").reduce((s: number, i: any) => s + i.amount, 0);
-    const outstanding = clientInvoices.filter((i: any) => ["pending", "overdue"].includes(i.status)).reduce((s: number, i: any) => s + i.amount, 0);
-    const activeProjects = clientProjects.filter((p: any) => !["completed", "closed"].includes(p.status)).length;
-    const address = [(client as any).street, (client as any).city, (client as any).postcode].filter(Boolean).join(", ");
+    const insStatus = insuranceStatus(sub.insuranceExpiry);
+    const address = [sub.street, sub.city, sub.postcode].filter(Boolean).join(", ");
 
     return (
         <div className="max-w-3xl mx-auto space-y-8 pb-20">
@@ -133,21 +147,21 @@ export default function ClientDetailPage() {
             <header className="space-y-4">
                 <button onClick={() => router.back()} className="flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors group">
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    Back to Clients
+                    Back to Subcontractors
                 </button>
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 shrink-0">
-                            <Building2 size={26} />
+                        <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+                            <HardHat size={26} />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-zinc-900">{client.name}</h1>
-                            <span className="inline-block text-xs font-semibold bg-zinc-100 text-zinc-600 px-2.5 py-0.5 rounded-full capitalize mt-1">
-                                {(client as any).type ?? "client"}
+                            <h1 className="text-2xl font-bold text-zinc-900">{sub.name}</h1>
+                            <span className={cn("inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full border capitalize mt-1", TRADE_COLORS[sub.trade] ?? TRADE_COLORS.other)}>
+                                {sub.trade}
                             </span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2">
                         <button onClick={openEdit} className="flex items-center gap-1.5 px-4 py-2 bg-zinc-900 text-white rounded-xl text-sm font-medium hover:bg-black transition-colors">
                             <Pencil size={14} /> Edit
                         </button>
@@ -158,112 +172,104 @@ export default function ClientDetailPage() {
                 </div>
             </header>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                    { label: "Total Revenue", value: formatCurrency(totalRevenue, settings?.currency), icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
-                    { label: "Outstanding", value: formatCurrency(outstanding, settings?.currency), icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-                    { label: "Active Projects", value: String(activeProjects), icon: FolderKanban, color: "text-orange-600", bg: "bg-orange-50" },
-                    { label: "Total Projects", value: String(clientProjects.length), icon: FolderKanban, color: "text-zinc-600", bg: "bg-zinc-100" },
-                ].map(({ label, value, icon: Icon, color, bg }) => (
-                    <div key={label} className="bg-white rounded-2xl border border-zinc-200 p-4">
-                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-2", bg)}>
-                            <Icon size={15} className={color} />
-                        </div>
-                        <p className="text-lg font-bold text-zinc-900">{value}</p>
-                        <p className="text-xs text-zinc-400 mt-0.5">{label}</p>
+            {/* Insurance warning banner */}
+            {insStatus === "expired" && (
+                <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
+                    <AlertTriangle size={18} className="text-red-500 shrink-0" />
+                    <div>
+                        <p className="text-sm font-semibold text-red-700">Insurance expired</p>
+                        <p className="text-xs text-red-600">Expired on {formatDate(sub.insuranceExpiry!)}. Do not assign to active projects until renewed.</p>
                     </div>
-                ))}
-            </div>
+                </div>
+            )}
+            {insStatus === "expiring" && (
+                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4">
+                    <AlertTriangle size={18} className="text-amber-500 shrink-0" />
+                    <div>
+                        <p className="text-sm font-semibold text-amber-700">Insurance expiring soon</p>
+                        <p className="text-xs text-amber-600">Expires on {formatDate(sub.insuranceExpiry!)}. Request renewal before it lapses.</p>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Main content */}
+                {/* Main info */}
                 <div className="md:col-span-2 space-y-6">
-                    {/* Contact info */}
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-3">
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
                         <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Contact Info</h2>
-                        {client.email && (
-                            <a href={`mailto:${client.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
-                                <Mail size={15} className="text-zinc-400 shrink-0" /> {client.email}
+                        <div className="space-y-3">
+                            <a href={`mailto:${sub.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                                <Mail size={15} className="text-zinc-400 shrink-0" /> {sub.email}
                             </a>
-                        )}
-                        {(client as any).phone && (
-                            <a href={`tel:${(client as any).phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
-                                <Phone size={15} className="text-zinc-400 shrink-0" /> {(client as any).phone}
-                            </a>
-                        )}
-                        {(client as any).website && (
-                            <a href={(client as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
-                                <Globe size={15} className="text-zinc-400 shrink-0" /> {(client as any).website}
-                            </a>
-                        )}
-                        {address && (
-                            <div className="flex items-center gap-3 text-sm text-zinc-700">
-                                <MapPin size={15} className="text-zinc-400 shrink-0" /> {address}
-                            </div>
-                        )}
+                            {sub.phone && (
+                                <a href={`tel:${sub.phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                                    <Phone size={15} className="text-zinc-400 shrink-0" /> {sub.phone}
+                                </a>
+                            )}
+                            {(sub as any).website && (
+                                <a href={(sub as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                                    <Globe size={15} className="text-zinc-400 shrink-0" /> {(sub as any).website}
+                                </a>
+                            )}
+                            {address && (
+                                <div className="flex items-center gap-3 text-sm text-zinc-700">
+                                    <MapPin size={15} className="text-zinc-400 shrink-0" /> {address}
+                                </div>
+                            )}
+                        </div>
                     </div>
+
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+                        <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Credentials</h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-xs text-zinc-400 mb-1">License Number</p>
+                                <div className="flex items-center gap-2">
+                                    <FileText size={14} className="text-zinc-400" />
+                                    <p className="text-sm font-semibold text-zinc-800">{sub.licenseNumber || <span className="text-zinc-400 font-normal">—</span>}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="text-xs text-zinc-400 mb-1">Insurance Expiry</p>
+                                <div className={cn("flex items-center gap-2", insStatus === "expired" ? "text-red-600" : insStatus === "expiring" ? "text-amber-600" : "text-zinc-800")}>
+                                    <Shield size={14} className={insStatus === "ok" ? "text-emerald-500" : insStatus === "none" ? "text-zinc-400" : "inherit"} />
+                                    <p className="text-sm font-semibold">
+                                        {sub.insuranceExpiry ? formatDate(sub.insuranceExpiry) : <span className="text-zinc-400 font-normal">Not set</span>}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {sub.notes && (
+                        <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+                            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Notes</h2>
+                            <p className="text-sm text-zinc-700 whitespace-pre-wrap">{sub.notes}</p>
+                        </div>
+                    )}
 
                     {/* Projects */}
                     <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
-                            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Projects</h2>
-                            <Link href={`/dashboard/projects/new?clientId=${id}`}
-                                className="flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors">
-                                <Plus size={13} /> New
-                            </Link>
+                        <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+                            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Assigned Projects</h2>
+                            <span className="text-xs text-zinc-400">{projects.length}</span>
                         </div>
-                        {clientProjects.length === 0 ? (
-                            <div className="py-8 text-center text-sm text-zinc-400">No projects yet</div>
+                        {projects.length === 0 ? (
+                            <div className="px-6 py-8 text-center text-sm text-zinc-400">Not assigned to any projects</div>
                         ) : (
                             <div className="divide-y divide-zinc-100">
-                                {clientProjects.map((p: any) => (
-                                    <Link key={p._id} href={`/dashboard/projects/${p._id}`}
-                                        className="flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors group">
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <FolderKanban size={14} className="text-orange-400 shrink-0" />
-                                            <p className="text-sm font-semibold text-zinc-900 truncate group-hover:text-orange-500 transition-colors">{p.title}</p>
-                                        </div>
-                                        <div className="flex items-center gap-2 shrink-0">
-                                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize", PROJ_BADGE[p.status] ?? "bg-zinc-100 text-zinc-500")}>
-                                                {p.status.replace("_", " ")}
-                                            </span>
-                                            <ChevronRight size={13} className="text-zinc-300" />
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Invoices */}
-                    <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
-                            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Invoices</h2>
-                            <Link href={`/dashboard/invoices/new?clientId=${id}`}
-                                className="flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors">
-                                <Plus size={13} /> New
-                            </Link>
-                        </div>
-                        {clientInvoices.length === 0 ? (
-                            <div className="py-8 text-center text-sm text-zinc-400">No invoices yet</div>
-                        ) : (
-                            <div className="divide-y divide-zinc-100">
-                                {clientInvoices.map((inv: any) => (
-                                    <Link key={inv._id} href={`/dashboard/invoices/${inv._id}`}
-                                        className="flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors group">
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <FileText size={14} className="text-zinc-400 shrink-0" />
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-semibold font-mono text-zinc-900 group-hover:text-orange-500 transition-colors">{inv.invoiceNumber}</p>
-                                                <p className="text-xs text-zinc-400">{formatDate(inv.date)}</p>
+                                {projects.map((p: any) => (
+                                    <Link key={p._id} href={`/dashboard/projects/${p._id}`} className="flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors group">
+                                        <div className="flex items-center gap-3">
+                                            <FolderKanban size={15} className="text-orange-400 shrink-0" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-zinc-900 group-hover:text-orange-500 transition-colors">{p.title}</p>
+                                                {p.client && <p className="text-xs text-zinc-400">{p.client.name}</p>}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize", INV_BADGE[inv.status] ?? "bg-zinc-100 text-zinc-500")}>
-                                                {inv.status}
-                                            </span>
-                                            <p className="text-sm font-bold text-zinc-900">{formatCurrency(inv.amount, settings?.currency)}</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize", PROJECT_STATUS_BADGE[p.status] ?? "bg-zinc-100 text-zinc-500")}>{p.status}</span>
+                                            <ChevronRight size={14} className="text-zinc-300 group-hover:text-zinc-400 transition-colors" />
                                         </div>
                                     </Link>
                                 ))}
@@ -273,12 +279,11 @@ export default function ClientDetailPage() {
                 </div>
 
                 {/* Contacts sidebar */}
-                <div>
+                <div className="space-y-4">
                     <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100">
+                        <div className="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
                             <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Contacts</h2>
-                            <button onClick={() => { setContactForm({ name: "", email: "", phone: "", role: "" }); setShowAddContact(true); }}
-                                className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors">
+                            <button onClick={() => { setContactForm({ name: "", email: "", phone: "", role: "" }); setShowAddContact(true); }} className="p-1 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-700 transition-colors">
                                 <Plus size={15} />
                             </button>
                         </div>
@@ -295,7 +300,7 @@ export default function ClientDetailPage() {
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-sm font-semibold text-zinc-900 truncate">{c.name}</p>
-                                                    {c.role && <p className="text-xs text-zinc-400">{c.role}</p>}
+                                                    {c.role && <p className="text-xs text-zinc-400 truncate">{c.role}</p>}
                                                     {c.email && <p className="text-xs text-zinc-500 truncate">{c.email}</p>}
                                                     {c.phone && <p className="text-xs text-zinc-500">{c.phone}</p>}
                                                 </div>
@@ -317,7 +322,7 @@ export default function ClientDetailPage() {
                 </div>
             </div>
 
-            {/* Edit Client Modal */}
+            {/* Edit Subcontractor Modal */}
             <AnimatePresence>
                 {showEdit && editForm && (
                     <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -325,24 +330,24 @@ export default function ClientDetailPage() {
                         <motion.div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
                             initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}>
                             <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
-                                <h3 className="text-base font-bold text-zinc-900">Edit Client</h3>
+                                <h3 className="text-base font-bold text-zinc-900">Edit Subcontractor</h3>
                                 <button onClick={() => setShowEdit(false)} className="p-1.5 hover:bg-zinc-100 rounded-lg text-zinc-400"><X size={16} /></button>
                             </div>
-                            <form onSubmit={handleUpdateClient} className="p-6 space-y-4">
+                            <form onSubmit={handleUpdateSub} className="p-6 space-y-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Name *</label>
                                     <input required value={editForm.name} onChange={(e) => setEditForm((f: any) => ({ ...f, name: e.target.value }))} className={inputCls} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-medium text-zinc-500">Email *</label>
-                                        <input required type="email" value={editForm.email} onChange={(e) => setEditForm((f: any) => ({ ...f, email: e.target.value }))} className={inputCls} />
+                                        <label className="text-xs font-medium text-zinc-500">Trade *</label>
+                                        <select value={editForm.trade} onChange={(e) => setEditForm((f: any) => ({ ...f, trade: e.target.value }))} className={inputCls}>
+                                            {TRADES.map((t) => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+                                        </select>
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-medium text-zinc-500">Type</label>
-                                        <select value={editForm.type} onChange={(e) => setEditForm((f: any) => ({ ...f, type: e.target.value }))} className={inputCls}>
-                                            {CLIENT_TYPES.map((t) => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-                                        </select>
+                                        <label className="text-xs font-medium text-zinc-500">Email *</label>
+                                        <input required type="email" value={editForm.email} onChange={(e) => setEditForm((f: any) => ({ ...f, email: e.target.value }))} className={inputCls} />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-medium text-zinc-500">Phone</label>
@@ -366,6 +371,20 @@ export default function ClientDetailPage() {
                                         <label className="text-xs font-medium text-zinc-500">Postcode</label>
                                         <input value={editForm.postcode} onChange={(e) => setEditForm((f: any) => ({ ...f, postcode: e.target.value }))} className={inputCls} />
                                     </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-medium text-zinc-500">License Number</label>
+                                        <input value={editForm.licenseNumber} onChange={(e) => setEditForm((f: any) => ({ ...f, licenseNumber: e.target.value }))} className={inputCls} />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-medium text-zinc-500 flex items-center gap-1.5"><Calendar size={11} /> Insurance Expiry</label>
+                                        <input type="date" value={editForm.insuranceExpiry} onChange={(e) => setEditForm((f: any) => ({ ...f, insuranceExpiry: e.target.value }))} className={inputCls} />
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-medium text-zinc-500">Notes</label>
+                                    <textarea rows={3} value={editForm.notes} onChange={(e) => setEditForm((f: any) => ({ ...f, notes: e.target.value }))} className={cn(inputCls, "resize-none")} />
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setShowEdit(false)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
@@ -394,11 +413,11 @@ export default function ClientDetailPage() {
                             <form onSubmit={handleAddContact} className="p-6 space-y-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Name *</label>
-                                    <input required value={contactForm.name} onChange={(e) => setContactForm((f) => ({ ...f, name: e.target.value }))} className={inputCls} placeholder="e.g. Jane Murphy" />
+                                    <input required value={contactForm.name} onChange={(e) => setContactForm((f) => ({ ...f, name: e.target.value }))} className={inputCls} placeholder="e.g. John Smith" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Role</label>
-                                    <input value={contactForm.role} onChange={(e) => setContactForm((f) => ({ ...f, role: e.target.value }))} className={inputCls} placeholder="e.g. Procurement Manager" />
+                                    <input value={contactForm.role} onChange={(e) => setContactForm((f) => ({ ...f, role: e.target.value }))} className={inputCls} placeholder="e.g. Site Foreman" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Email</label>
@@ -462,5 +481,14 @@ export default function ClientDetailPage() {
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+export default function SubcontractorDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center py-32"><Loader2 className="animate-spin text-zinc-300" size={32} /></div>}>
+            <SubcontractorDetail id={id as Id<"subcontractors">} />
+        </Suspense>
     );
 }
