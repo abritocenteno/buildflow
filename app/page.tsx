@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Building2, FolderKanban, FileText, ClipboardList, HardHat, BarChart2 } from "lucide-react";
+import { SignInButton } from "@/components/clerk-compat";
 
 const features = [
     { icon: FolderKanban, title: "Project Management", desc: "Kanban boards, milestones, and real-time progress tracking for every job site." },
@@ -21,12 +22,11 @@ export default function LandingPage() {
                     </div>
                     <span className="font-bold text-xl tracking-tight">Build<span className="text-orange-500">Flow</span></span>
                 </div>
-                <Link
-                    href="/dashboard"
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                >
-                    Open Dashboard
-                </Link>
+                <SignInButton mode="redirect">
+                    <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        Open Dashboard
+                    </button>
+                </SignInButton>
             </nav>
 
             {/* Hero */}
@@ -43,12 +43,11 @@ export default function LandingPage() {
                     BuildFlow gives contractors the tools to quote jobs, track projects, manage subcontractors, and invoice clients — all in one place.
                 </p>
                 <div className="flex items-center justify-center gap-4">
-                    <Link
-                        href="/dashboard"
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl text-base font-bold transition-colors shadow-lg shadow-orange-500/25"
-                    >
-                        Go to Dashboard
-                    </Link>
+                    <SignInButton mode="redirect">
+                        <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl text-base font-bold transition-colors shadow-lg shadow-orange-500/25">
+                            Go to Dashboard
+                        </button>
+                    </SignInButton>
                     <Link
                         href="/request"
                         className="bg-zinc-100 hover:bg-zinc-200 text-zinc-900 px-8 py-4 rounded-2xl text-base font-bold transition-colors"
