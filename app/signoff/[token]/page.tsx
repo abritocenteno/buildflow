@@ -3,7 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { SignaturePad } from "@/components/SignaturePad";
 import { CheckCircle, Camera, X, MapPin, Building2 } from "lucide-react";
@@ -14,6 +14,14 @@ export default function SignoffPage() {
     const data = useQuery(api.signoffs.getByToken, { token });
     const complete = useMutation(api.signoffs.complete);
     const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+
+    // Force light mode — sign-off page must be readable on any device
+    useEffect(() => {
+        const html = document.documentElement;
+        const wasDark = html.classList.contains("dark");
+        html.classList.remove("dark");
+        return () => { if (wasDark) html.classList.add("dark"); };
+    }, []);
 
     const [supervisorName, setSupervisorName] = useState("");
     const [workDescription, setWorkDescription] = useState("");
