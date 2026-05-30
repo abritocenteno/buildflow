@@ -12,6 +12,7 @@ import {
     ClipboardCheck, Send, Copy, Check,
 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import { SignoffDetailModal } from "@/components/SignoffDetailModal";
 
 const STATUSES = [
     { key: "planning", label: "Planning", color: "bg-zinc-100 text-zinc-600" },
@@ -68,6 +69,7 @@ export default function ProjectDetailPage() {
     const [signoffSending, setSignoffSending] = useState(false);
     const [signoffLink, setSignoffLink] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [selectedSignoffId, setSelectedSignoffId] = useState<Id<"signoffs"> | null>(null);
 
     if (project === undefined) {
         return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
@@ -488,7 +490,11 @@ export default function ProjectDetailPage() {
                         <div className="text-center text-sm text-zinc-400 py-10">No sign-off requests sent yet</div>
                     )}
                     {(signoffs ?? []).map((s) => (
-                        <div key={s._id} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center justify-between">
+                        <button
+                            key={s._id}
+                            onClick={() => s.status === "completed" ? setSelectedSignoffId(s._id) : null}
+                            className={`w-full bg-white rounded-2xl border border-zinc-200 p-4 flex items-center justify-between text-left transition-colors ${s.status === "completed" ? "hover:border-sky-200 hover:bg-sky-50/30 cursor-pointer" : "cursor-default"}`}
+                        >
                             <div className="space-y-0.5">
                                 <p className="text-sm font-medium text-zinc-900">{s.clientName}</p>
                                 <p className="text-xs text-zinc-500">{s.clientEmail}</p>
@@ -505,9 +511,17 @@ export default function ProjectDetailPage() {
                                     <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Pending</span>
                                 )}
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
+            )}
+
+            {/* Sign-off Detail Modal */}
+            {selectedSignoffId && (
+                <SignoffDetailModal
+                    signoffId={selectedSignoffId}
+                    onClose={() => setSelectedSignoffId(null)}
+                />
             )}
 
             {/* Send Sign-off Modal */}

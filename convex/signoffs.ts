@@ -60,6 +60,20 @@ export const listByProject = query({
     },
 });
 
+export const getById = query({
+    args: { id: v.id("signoffs") },
+    handler: async (ctx, { id }) => {
+        const signoff = await ctx.db.get(id);
+        if (!signoff) return null;
+        const project = await ctx.db.get(signoff.projectId);
+        const client = project ? await ctx.db.get(project.clientId) : null;
+        const photoUrls = signoff.photoIds
+            ? await Promise.all(signoff.photoIds.map((sid) => ctx.storage.getUrl(sid)))
+            : [];
+        return { ...signoff, photoUrls: photoUrls.filter(Boolean) as string[], project, client };
+    },
+});
+
 // Public — token acts as auth
 export const complete = mutation({
     args: {

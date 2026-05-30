@@ -267,3 +267,79 @@ export const sendSignoffRequestEmail = action({
         return { success: true };
     },
 });
+
+export const sendSignoffCompletionEmail = action({
+    args: { signoffId: v.id("signoffs") },
+    handler: async (ctx, { signoffId }) => {
+        const resendApiKey = process.env.RESEND_API_KEY;
+        if (!resendApiKey) throw new Error("RESEND_API_KEY not set");
+
+        const signoff = await ctx.runQuery(api.signoffs.getById, { id: signoffId });
+        if (!signoff) throw new Error("Sign-off not found");
+        if (signoff.status !== "completed") throw new Error("Sign-off is not yet completed");
+
+        const settings = await ctx.runQuery(api.settings.get);
+        const company = settings?.companyName ?? "Arcocen";
+        const senderName = settings?.emailSenderName || company;
+        const replyTo = settings?.contactEmail;
+
+        const resend = new Resend(resendApiKey);
+
+        const signedAt = signoff.completedAt
+            ? new Date(signoff.completedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            : "—";
+
+        const workBlock = signoff.workDescription
+            ? `<div style="background:#f4f4f5;border-radius:8px;padding:16px;margin-bottom:16px;">
+                <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#71717a;">Work performed</p>
+                <p style="margin:0;font-size:14px;color:#18181b;line-height:1.6;">${signoff.workDescription}</p>
+               </div>`
+            : "";
+
+        const timesBlock = (signoff.checkIn || signoff.checkOut)
+            ? `<p style="margin:0 0 16px;font-size:13px;color:#52525b;">
+                ${signoff.checkIn ? `Check-in: <strong>${signoff.checkIn}</strong>` : ""}
+                ${signoff.checkIn && signoff.checkOut ? " &nbsp;·&nbsp; " : ""}
+                ${signoff.checkOut ? `Check-out: <strong>${signoff.checkOut}</strong>` : ""}
+               </p>`
+            : "";
+
+        const sigBlock = signoff.signatureData
+            ? `<div style="border:1px solid #e4e4e7;border-radius:8px;padding:12px;margin-top:8px;">
+                <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#18181b;">${signoff.supervisorName ?? ""}</p>
+                <img src="${signoff.signatureData}" style="max-height:80px;width:auto;" />
+               </div>`
+            : `<p style="font-size:14px;font-weight:700;">${signoff.supervisorName ?? ""}</p>`;
+
+        await resend.emails.send({
+            from: fromAddress(senderName),
+            to: [signoff.clientEmail],
+            ...(replyTo ? { replyTo } : {}),
+            subject: `Sign-off confirmed: ${signoff.project?.title ?? "Project"} — ${company}`,
+            text: `Dear ${signoff.clientName},\n\nThank you for signing off on "${signoff.project?.title ?? "your project"}".\n\nSigned by: ${signoff.supervisorName ?? ""}\nDate: ${signedAt}\n${signoff.workDescription ? `\nWork performed:\n${signoff.workDescription}\n` : ""}\n${company}`,
+            html: `
+                <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#18181b;">
+                    <h2 style="font-size:22px;font-weight:900;margin:0 0 4px;">Sign-off confirmed</h2>
+                    <p style="color:#71717a;margin:0 0 32px;font-size:14px;">From ${company}</p>
+                    <p style="margin:0 0 16px;">Dear <strong>${signoff.clientName}</strong>,</p>
+                    <p style="margin:0 0 24px;line-height:1.6;">Thank you for signing off on <strong>${signoff.project?.title ?? "your project"}</strong>. A record of this sign-off is included below.</p>
+                    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:16px 20px;margin-bottom:24px;">
+                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0369a1;">Project</p>
+                        <p style="margin:0;font-weight:700;font-size:16px;color:#0c4a6e;">${signoff.project?.title ?? ""}</p>
+                        <p style="margin:4px 0 0;font-size:12px;color:#0369a1;">Signed ${signedAt}</p>
+                    </div>
+                    ${workBlock}
+                    ${timesBlock}
+                    <div style="margin-bottom:24px;">
+                        <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#71717a;">Signature</p>
+                        ${sigBlock}
+                    </div>
+                    <hr style="border:none;border-top:1px solid #e4e4e7;margin:32px 0;" />
+                    <p style="margin:0;font-size:12px;color:#a1a1aa;">© ${new Date().getFullYear()} ${company}</p>
+                </div>
+            `,
+        });
+
+        return { success: true };
+    },
+});
