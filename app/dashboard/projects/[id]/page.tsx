@@ -15,7 +15,7 @@ import { Id } from "@/convex/_generated/dataModel";
 const STATUSES = [
     { key: "planning", label: "Planning", color: "bg-zinc-100 text-zinc-600" },
     { key: "permitting", label: "Permitting", color: "bg-blue-100 text-blue-700" },
-    { key: "in_progress", label: "In Progress", color: "bg-orange-100 text-orange-700" },
+    { key: "in_progress", label: "In Progress", color: "bg-sky-100 text-sky-700" },
     { key: "punch_list", label: "Punch List", color: "bg-amber-100 text-amber-700" },
     { key: "completed", label: "Completed", color: "bg-emerald-100 text-emerald-700" },
     { key: "closed", label: "Closed", color: "bg-zinc-200 text-zinc-500" },
@@ -61,7 +61,7 @@ export default function ProjectDetailPage() {
     const [saving, setSaving] = useState(false);
 
     if (project === undefined) {
-        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
     }
     if (project === null) {
         return <div className="text-center py-24 text-zinc-500">Project not found</div>;
@@ -101,7 +101,7 @@ export default function ProjectDetailPage() {
         setEditProgress(false);
     };
 
-    const inputCls = "w-full px-3 py-2 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const TABS: { key: Tab; label: string }[] = [
         { key: "overview", label: "Overview" },
@@ -135,7 +135,7 @@ export default function ProjectDetailPage() {
                     <select
                         value={project.status}
                         onChange={(e) => updateStatus({ id: id as Id<"projects">, status: e.target.value })}
-                        className="text-xs px-3 py-2 rounded-xl border border-zinc-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                        className="text-xs px-3 py-2 rounded-xl border border-zinc-200 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                     >
                         {STATUSES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
                     </select>
@@ -162,18 +162,18 @@ export default function ProjectDetailPage() {
                 <div className="bg-white rounded-xl border border-zinc-200 p-4">
                     <div className="flex items-center justify-between mb-1">
                         <p className="text-xs text-zinc-500">Progress</p>
-                        <button onClick={() => { setProgress(project.progress ?? 0); setEditProgress(true); }} className="text-xs text-orange-500 hover:text-orange-600">edit</button>
+                        <button onClick={() => { setProgress(project.progress ?? 0); setEditProgress(true); }} className="text-xs text-sky-500 hover:text-sky-600">edit</button>
                     </div>
                     {editProgress ? (
                         <div className="flex items-center gap-2">
                             <input type="number" min={0} max={100} value={progress} onChange={(e) => setProgress(parseInt(e.target.value))} className="w-16 px-2 py-1 text-sm border border-zinc-200 rounded-lg" />
-                            <button onClick={handleProgressSave} className="text-xs text-orange-500 font-medium">Save</button>
+                            <button onClick={handleProgressSave} className="text-xs text-sky-500 font-medium">Save</button>
                         </div>
                     ) : (
                         <>
                             <p className="font-bold text-zinc-900">{project.progress ?? 0}%</p>
                             <div className="mt-1.5 h-1.5 bg-zinc-100 rounded-full">
-                                <div className="h-1.5 bg-orange-500 rounded-full" style={{ width: `${project.progress ?? 0}%` }} />
+                                <div className="h-1.5 bg-sky-500 rounded-full" style={{ width: `${project.progress ?? 0}%` }} />
                             </div>
                         </>
                     )}
@@ -183,7 +183,7 @@ export default function ProjectDetailPage() {
             {/* Site address */}
             {project.siteAddress && (
                 <div className="flex items-center gap-2 text-sm text-zinc-500">
-                    <MapPin size={14} className="text-orange-500" />
+                    <MapPin size={14} className="text-sky-500" />
                     {project.siteAddress}{project.siteCity ? `, ${project.siteCity}` : ""}{project.sitePostcode ? ` ${project.sitePostcode}` : ""}
                 </div>
             )}
@@ -197,7 +197,7 @@ export default function ProjectDetailPage() {
                             onClick={() => setTab(t.key)}
                             className={cn(
                                 "px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px",
-                                tab === t.key ? "border-orange-500 text-orange-600" : "border-transparent text-zinc-500 hover:text-zinc-900"
+                                tab === t.key ? "border-sky-500 text-sky-600" : "border-transparent text-zinc-500 hover:text-zinc-900"
                             )}
                         >
                             {t.label}
@@ -229,7 +229,7 @@ export default function ProjectDetailPage() {
                     <div className="flex justify-end">
                         <button
                             onClick={() => setShowCOForm(true)}
-                            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                            className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                         >
                             <Plus size={15} /> Add Change Order
                         </button>
@@ -241,7 +241,7 @@ export default function ProjectDetailPage() {
                             <input type="number" className={inputCls} placeholder="Amount (€, use − for credits)" value={coForm.amount} onChange={(e) => setCOForm({ ...coForm, amount: e.target.value })} />
                             <textarea className={inputCls} rows={2} placeholder="Notes (optional)" value={coForm.notes} onChange={(e) => setCOForm({ ...coForm, notes: e.target.value })} />
                             <div className="flex gap-2">
-                                <button onClick={handleCreateCO} disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">Save</button>
+                                <button onClick={handleCreateCO} disabled={saving} className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">Save</button>
                                 <button onClick={() => setShowCOForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100">Cancel</button>
                             </div>
                         </div>
@@ -286,7 +286,7 @@ export default function ProjectDetailPage() {
                     <div className="flex justify-end">
                         <button
                             onClick={() => setShowPermitForm(true)}
-                            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                            className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                         >
                             <Plus size={15} /> Add Permit
                         </button>
@@ -300,7 +300,7 @@ export default function ProjectDetailPage() {
                             <input className={inputCls} placeholder="Permit number (optional)" value={permitForm.permitNumber} onChange={(e) => setPermitForm({ ...permitForm, permitNumber: e.target.value })} />
                             <textarea className={inputCls} rows={2} placeholder="Notes" value={permitForm.notes} onChange={(e) => setPermitForm({ ...permitForm, notes: e.target.value })} />
                             <div className="flex gap-2">
-                                <button onClick={handleCreatePermit} disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">Save</button>
+                                <button onClick={handleCreatePermit} disabled={saving} className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">Save</button>
                                 <button onClick={() => setShowPermitForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100">Cancel</button>
                             </div>
                         </div>
@@ -341,14 +341,14 @@ export default function ProjectDetailPage() {
                     <div className="flex justify-end">
                         <Link
                             href={`/dashboard/invoices/new?projectId=${id}`}
-                            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                            className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
                         >
                             <Plus size={15} /> Create Invoice
                         </Link>
                     </div>
                     {(project.invoices ?? []).length === 0 && <div className="text-center text-sm text-zinc-400 py-10">No invoices yet</div>}
                     {(project.invoices ?? []).map((inv: any) => (
-                        <Link key={inv._id} href={`/dashboard/invoices/${inv._id}`} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center justify-between hover:border-orange-300 transition-colors">
+                        <Link key={inv._id} href={`/dashboard/invoices/${inv._id}`} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center justify-between hover:border-sky-300 transition-colors">
                             <div>
                                 <p className="text-sm font-semibold text-zinc-900">{inv.invoiceNumber}</p>
                                 <p className="text-xs text-zinc-500">{formatDate(inv.date)}</p>
@@ -365,7 +365,7 @@ export default function ProjectDetailPage() {
             {tab === "time" && (
                 <div className="space-y-3">
                     <div className="flex justify-end">
-                        <Link href={`/dashboard/timesheet?projectId=${id}`} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                        <Link href={`/dashboard/timesheet?projectId=${id}`} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
                             <Plus size={15} /> Log Time
                         </Link>
                     </div>

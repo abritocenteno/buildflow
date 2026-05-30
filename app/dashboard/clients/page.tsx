@@ -23,7 +23,7 @@ export default function ClientsPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Clients</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{clients.length} clients</p>
                 </div>
-                <Link href="/dashboard/clients/new" className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                <Link href="/dashboard/clients/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
                     <Plus size={16} /> New Client
                 </Link>
             </div>
@@ -34,7 +34,7 @@ export default function ClientsPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search clients…"
-                    className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all"
                 />
             </div>
 
@@ -51,8 +51,8 @@ export default function ClientsPage() {
                         href={`/dashboard/clients/${client._id}`}
                         className="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50 transition-colors"
                     >
-                        <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-bold text-orange-600">{client.name.charAt(0).toUpperCase()}</span>
+                        <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-bold text-sky-600">{client.name.charAt(0).toUpperCase()}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-zinc-900">{client.name}</p>

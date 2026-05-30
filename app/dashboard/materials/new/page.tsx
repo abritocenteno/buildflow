@@ -76,14 +76,14 @@ export default function NewMaterialPage() {
                         <label className="text-xs font-medium text-zinc-500">Name *</label>
                         <input required value={form.name} onChange={(e) => set("name", e.target.value)}
                             placeholder="e.g. Concrete blocks 20x20x40cm"
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                     </div>
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-medium text-zinc-500">Description</label>
                         <textarea value={form.description} onChange={(e) => set("description", e.target.value)}
                             placeholder="Additional details…" rows={2}
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 resize-none" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 resize-none" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -91,7 +91,7 @@ export default function NewMaterialPage() {
                             <label className="text-xs font-medium text-zinc-500">Category</label>
                             <div className="relative">
                                 <select value={form.category} onChange={(e) => set("category", e.target.value)}
-                                    className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none">
+                                    className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 appearance-none">
                                     <option value="">No category</option>
                                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                                 </select>
@@ -102,7 +102,7 @@ export default function NewMaterialPage() {
                             <label className="text-xs font-medium text-zinc-500">SKU / Code</label>
                             <input value={form.sku} onChange={(e) => set("sku", e.target.value)}
                                 placeholder="e.g. CBL-20-40"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                     </div>
 
@@ -110,14 +110,14 @@ export default function NewMaterialPage() {
                         <label className="text-xs font-medium text-zinc-500">Supplier</label>
                         <input value={form.supplier} onChange={(e) => set("supplier", e.target.value)}
                             placeholder="e.g. ABC Building Supplies"
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                     </div>
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-medium text-zinc-500">Project (optional)</label>
                         <div className="relative">
                             <select value={form.projectId} onChange={(e) => set("projectId", e.target.value)}
-                                className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none">
+                                className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 appearance-none">
                                 <option value="">No project</option>
                                 {projects.map((p: any) => <option key={p._id} value={p._id}>{p.title}</option>)}
                             </select>
@@ -134,13 +134,13 @@ export default function NewMaterialPage() {
                             <label className="text-xs font-medium text-zinc-500">Quantity *</label>
                             <input type="number" min="0" step="0.01" required value={form.quantity}
                                 onChange={(e) => set("quantity", e.target.value)}
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-zinc-500">Unit</label>
                             <div className="relative">
                                 <select value={form.unit} onChange={(e) => set("unit", e.target.value)}
-                                    className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none">
+                                    className="w-full px-4 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 appearance-none">
                                     {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
                                 </select>
                                 <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
@@ -151,14 +151,14 @@ export default function NewMaterialPage() {
                             <input type="number" min="0" step="0.01" value={form.unitCost}
                                 onChange={(e) => set("unitCost", e.target.value)}
                                 placeholder="0.00"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-zinc-500">Reorder Threshold</label>
                             <input type="number" min="0" step="0.01" value={form.reorderThreshold}
                                 onChange={(e) => set("reorderThreshold", e.target.value)}
                                 placeholder="e.g. 50"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@ export default function NewMaterialPage() {
                         Cancel
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                        className="flex items-center gap-2 px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-orange-500/20 disabled:opacity-50">
+                        className="flex items-center gap-2 px-8 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20 disabled:opacity-50">
                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
                         {isSubmitting ? "Saving…" : "Add Material"}
                     </button>

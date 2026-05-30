@@ -19,7 +19,7 @@ export default function RequestPage() {
     const [submitting, setSubmitting] = useState(false);
 
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
-    const inputCls = "w-full px-3 py-3 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-3 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,7 +42,7 @@ export default function RequestPage() {
                     <p className="text-sm text-zinc-500 leading-relaxed">
                         Thank you for reaching out. We&apos;ll review your request and get back to you shortly.
                     </p>
-                    <Link href="/" className="inline-block mt-2 text-sm text-orange-500 hover:text-orange-600 font-medium">← Back to home</Link>
+                    <Link href="/" className="inline-block mt-2 text-sm text-sky-500 hover:text-sky-600 font-medium">← Back to home</Link>
                 </div>
             </div>
         );
@@ -53,10 +53,10 @@ export default function RequestPage() {
             <div className="max-w-lg w-full space-y-6">
                 <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-xl bg-sky-500 flex items-center justify-center">
                             <span className="font-black text-white text-base">B</span>
                         </div>
-                        <span className="font-bold text-xl tracking-tight">Build<span className="text-orange-500">Flow</span></span>
+                        <span className="font-bold text-xl tracking-tight">Build<span className="text-sky-500">Flow</span></span>
                     </div>
                     <h1 className="text-2xl font-bold text-zinc-900">Request a Quote</h1>
                     <p className="text-sm text-zinc-500 mt-2">Tell us about your project and we&apos;ll get back to you.</p>
@@ -92,7 +92,7 @@ export default function RequestPage() {
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white py-3 rounded-xl text-sm font-bold transition-colors"
+                        className="w-full bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white py-3 rounded-xl text-sm font-bold transition-colors"
                     >
                         {submitting ? "Sending…" : "Submit Request"}
                     </button>

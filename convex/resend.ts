@@ -34,7 +34,7 @@ export const sendInvoiceEmail = action({
 
         const resend = new Resend(resendApiKey);
         const settings = await ctx.runQuery(api.settings.get);
-        const company = args.companyName || settings?.companyName || "BuildFlow";
+        const company = args.companyName || settings?.companyName || "Arcocen";
         const senderName = settings?.emailSenderName || company;
         const currency = settings?.currency ?? "EUR";
         const bankAccounts = settings?.bankAccounts ?? "";
@@ -107,7 +107,7 @@ export const sendOverdueReminderEmail = action({
         if (!client?.email) throw new Error("Client has no email address on file");
 
         const settings = await ctx.runQuery(api.settings.get);
-        const companyName = settings?.companyName ?? "BuildFlow";
+        const companyName = settings?.companyName ?? "Arcocen";
         const contactEmail = settings?.contactEmail ?? "";
         const phone = settings?.phone ?? "";
         const bankAccounts = settings?.bankAccounts ?? "";

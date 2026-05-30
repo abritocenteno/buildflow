@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 const STATUSES = [
     { key: "planning", label: "Planning", color: "bg-zinc-100 text-zinc-600 border-zinc-200" },
     { key: "permitting", label: "Permitting", color: "bg-blue-100 text-blue-700 border-blue-200" },
-    { key: "in_progress", label: "In Progress", color: "bg-orange-100 text-orange-700 border-orange-200" },
+    { key: "in_progress", label: "In Progress", color: "bg-sky-100 text-sky-700 border-sky-200" },
     { key: "punch_list", label: "Punch List", color: "bg-amber-100 text-amber-700 border-amber-200" },
     { key: "completed", label: "Completed", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
     { key: "closed", label: "Closed", color: "bg-zinc-200 text-zinc-500 border-zinc-300" },
@@ -24,10 +24,10 @@ function ProjectCard({ project }: { project: any }) {
     return (
         <Link
             href={`/dashboard/projects/${project._id}`}
-            className="bg-white rounded-2xl border border-zinc-200 p-5 hover:border-orange-300 hover:shadow-md transition-all group block"
+            className="bg-white rounded-2xl border border-zinc-200 p-5 hover:border-sky-300 hover:shadow-md transition-all group block"
         >
             <div className="flex items-start justify-between gap-2 mb-3">
-                <h3 className="font-semibold text-zinc-900 text-sm group-hover:text-orange-600 transition-colors leading-snug">{project.title}</h3>
+                <h3 className="font-semibold text-zinc-900 text-sm group-hover:text-sky-600 transition-colors leading-snug">{project.title}</h3>
                 <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full border flex-shrink-0", status?.color ?? "bg-zinc-100 text-zinc-500 border-zinc-200")}>
                     {status?.label ?? project.status}
                 </span>
@@ -47,7 +47,7 @@ function ProjectCard({ project }: { project: any }) {
                     </div>
                     <div className="h-1.5 bg-zinc-100 rounded-full">
                         <div
-                            className="h-1.5 bg-orange-500 rounded-full transition-all"
+                            className="h-1.5 bg-sky-500 rounded-full transition-all"
                             style={{ width: `${project.progress}%` }}
                         />
                     </div>
@@ -99,7 +99,7 @@ export default function ProjectsPage() {
                     </div>
                     <Link
                         href="/dashboard/projects/new"
-                        className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm shadow-orange-500/20"
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm shadow-sky-500/20"
                     >
                         <Plus size={16} />
                         New Project
@@ -183,7 +183,7 @@ export default function ProjectsPage() {
                                 return (
                                     <tr key={project._id} className="hover:bg-zinc-50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <Link href={`/dashboard/projects/${project._id}`} className="font-medium text-zinc-900 hover:text-orange-600">
+                                            <Link href={`/dashboard/projects/${project._id}`} className="font-medium text-zinc-900 hover:text-sky-600">
                                                 {project.title}
                                             </Link>
                                             {project.siteAddress && <p className="text-xs text-zinc-400 mt-0.5">{project.siteAddress}</p>}
@@ -201,7 +201,7 @@ export default function ProjectsPage() {
                                             {project.endDate ? formatDate(project.endDate) : "—"}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link href={`/dashboard/projects/${project._id}`} className="text-zinc-400 hover:text-orange-500 transition-colors">
+                                            <Link href={`/dashboard/projects/${project._id}`} className="text-zinc-400 hover:text-sky-500 transition-colors">
                                                 <ChevronRight size={18} />
                                             </Link>
                                         </td>

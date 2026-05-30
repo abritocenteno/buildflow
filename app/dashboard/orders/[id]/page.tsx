@@ -46,7 +46,7 @@ function OrderDetail({ id }: { id: Id<"orders"> }) {
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
             <h2 className="text-xl font-bold">Order not found</h2>
-            <button onClick={() => router.back()} className="text-sm text-orange-500 hover:underline">Go back</button>
+            <button onClick={() => router.back()} className="text-sm text-sky-500 hover:underline">Go back</button>
         </div>
     );
 
@@ -88,7 +88,7 @@ function OrderDetail({ id }: { id: Id<"orders"> }) {
                                         {STATUS_OPTS.map((s) => (
                                             <button key={s} onClick={() => handleStatusChange(s)}
                                                 className={cn("w-full text-left px-4 py-2.5 text-sm font-medium hover:bg-zinc-50 transition-colors capitalize flex items-center gap-2",
-                                                    order.status === s && "text-orange-500 bg-orange-50/50")}>
+                                                    order.status === s && "text-sky-500 bg-sky-50/50")}>
                                                 {order.status === s && <CheckCircle2 size={13} />}
                                                 {s}
                                             </button>
@@ -118,7 +118,7 @@ function OrderDetail({ id }: { id: Id<"orders"> }) {
                     <div>
                         <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Supplier</p>
                         {supplier ? (
-                            <Link href={`/dashboard/suppliers/${supplier._id}`} className="text-sm font-bold text-orange-500 hover:underline flex items-center gap-1">
+                            <Link href={`/dashboard/suppliers/${supplier._id}`} className="text-sm font-bold text-sky-500 hover:underline flex items-center gap-1">
                                 <Truck size={13} />{supplier.name}
                             </Link>
                         ) : <p className="text-sm text-zinc-400">—</p>}
@@ -131,8 +131,8 @@ function OrderDetail({ id }: { id: Id<"orders"> }) {
                 {project && (
                     <div className="mt-4 pt-4 border-t border-zinc-100">
                         <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Project</p>
-                        <Link href={`/dashboard/projects/${project._id}`} className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 hover:text-orange-500 transition-colors">
-                            <FolderKanban size={14} className="text-orange-400" />
+                        <Link href={`/dashboard/projects/${project._id}`} className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 hover:text-sky-500 transition-colors">
+                            <FolderKanban size={14} className="text-sky-400" />
                             {project.title}
                             <ChevronRight size={13} className="text-zinc-300" />
                         </Link>

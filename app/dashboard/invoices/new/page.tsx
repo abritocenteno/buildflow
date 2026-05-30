@@ -131,7 +131,7 @@ function CreateInvoiceForm() {
                     Back to Invoices
                 </button>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
                         <FileText size={20} />
                     </div>
                     <div>
@@ -156,7 +156,7 @@ function CreateInvoiceForm() {
                                     required
                                     value={formData.clientId}
                                     onChange={(e) => setFormData((p) => ({ ...p, clientId: e.target.value as Id<"clients">, projectId: "" }))}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 appearance-none"
+                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 appearance-none"
                                 >
                                     <option value="" disabled>Select client…</option>
                                     {clients.map((c: any) => <option key={c._id} value={c._id}>{c.name}</option>)}
@@ -173,7 +173,7 @@ function CreateInvoiceForm() {
                                 <select
                                     value={formData.projectId}
                                     onChange={(e) => setFormData((p) => ({ ...p, projectId: e.target.value as Id<"projects"> }))}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 appearance-none"
+                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 appearance-none"
                                 >
                                     <option value="">No project</option>
                                     {filteredProjects.map((p: any) => <option key={p._id} value={p._id}>{p.title}</option>)}
@@ -194,7 +194,7 @@ function CreateInvoiceForm() {
                                         className={cn(
                                             "flex-1 py-2.5 rounded-xl text-xs font-semibold border capitalize transition-all",
                                             formData.invoiceType === t
-                                                ? "bg-orange-500 text-white border-orange-500 shadow-sm shadow-orange-500/20"
+                                                ? "bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-500/20"
                                                 : "bg-zinc-50 text-zinc-500 border-zinc-200 hover:border-zinc-300"
                                         )}
                                     >
@@ -212,7 +212,7 @@ function CreateInvoiceForm() {
                                 <select
                                     value={formData.paymentMethod}
                                     onChange={(e) => setFormData((p) => ({ ...p, paymentMethod: e.target.value }))}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 appearance-none"
+                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 appearance-none"
                                 >
                                     <option value="">Select method (optional)</option>
                                     {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -231,7 +231,7 @@ function CreateInvoiceForm() {
                                     required
                                     value={formData.date}
                                     onChange={(e) => setFormData((p) => ({ ...p, date: e.target.value }))}
-                                    className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300"
+                                    className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300"
                                 />
                             </div>
                         </div>
@@ -245,7 +245,7 @@ function CreateInvoiceForm() {
                                     type="date"
                                     value={formData.dueDate}
                                     onChange={(e) => setFormData((p) => ({ ...p, dueDate: e.target.value }))}
-                                    className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300"
+                                    className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300"
                                 />
                             </div>
                         </div>
@@ -317,7 +317,7 @@ function CreateInvoiceForm() {
                                             <input
                                                 type="number"
                                                 min="1"
-                                                className="w-14 mx-auto block bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-center py-1 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                                                className="w-14 mx-auto block bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-center py-1 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                                                 value={item.amount}
                                                 onChange={(e) => updateItem(i, "amount", parseInt(e.target.value) || 1)}
                                             />
@@ -329,7 +329,7 @@ function CreateInvoiceForm() {
                                                     type="number"
                                                     step="0.01"
                                                     min="0"
-                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                                                     value={item.unitPrice || ""}
                                                     placeholder="0.00"
                                                     onChange={(e) => updateItem(i, "unitPrice", parseFloat(e.target.value) || 0)}
@@ -367,7 +367,7 @@ function CreateInvoiceForm() {
                                                     type="checkbox"
                                                     checked={formData.taxRate > 0}
                                                     onChange={(e) => setFormData((p) => ({ ...p, taxRate: e.target.checked ? (settings?.defaultTaxRate ?? 21) : 0 }))}
-                                                    className="rounded border-zinc-300 text-orange-500"
+                                                    className="rounded border-zinc-300 text-sky-500"
                                                 />
                                                 <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">VAT</span>
                                             </label>
@@ -377,7 +377,7 @@ function CreateInvoiceForm() {
                                                         type="number" min={0} max={100} step={0.1}
                                                         value={formData.taxRate}
                                                         onChange={(e) => setFormData((p) => ({ ...p, taxRate: parseFloat(e.target.value) || 0 }))}
-                                                        className="w-14 px-2 py-1 text-xs border border-zinc-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                                                        className="w-14 px-2 py-1 text-xs border border-zinc-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                                                     />
                                                     <span className="text-xs text-zinc-400 font-semibold">%</span>
                                                 </div>
@@ -422,7 +422,7 @@ function CreateInvoiceForm() {
                                                 <span className="text-xs text-zinc-400">{sym}</span>
                                                 <input
                                                     type="number" step="0.01" min="0" required
-                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                                                     value={c.amount || ""}
                                                     placeholder="0.00"
                                                     onChange={(e) => updateCredit(i, "amount", parseFloat(e.target.value) || 0)}
@@ -451,7 +451,7 @@ function CreateInvoiceForm() {
                                 type="checkbox"
                                 checked={formData.retainagePercent > 0}
                                 onChange={(e) => setFormData((p) => ({ ...p, retainagePercent: e.target.checked ? 10 : 0 }))}
-                                className="rounded border-zinc-300 text-orange-500"
+                                className="rounded border-zinc-300 text-sky-500"
                             />
                             <span className="text-sm font-medium text-zinc-700">Apply retainage</span>
                         </label>
@@ -462,7 +462,7 @@ function CreateInvoiceForm() {
                                     type="number" min={0} max={100} step={0.5}
                                     value={formData.retainagePercent}
                                     onChange={(e) => setFormData((p) => ({ ...p, retainagePercent: parseFloat(e.target.value) || 0 }))}
-                                    className="w-16 px-2 py-1 text-sm border border-zinc-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                                    className="w-16 px-2 py-1 text-sm border border-zinc-200 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-sky-500/20"
                                 />
                                 <span className="text-sm text-zinc-500">%</span>
                             </div>
@@ -505,7 +505,7 @@ function CreateInvoiceForm() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-orange-500/20 disabled:opacity-50"
+                        className="flex items-center gap-2 px-8 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20 disabled:opacity-50"
                     >
                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
                         {isSubmitting ? "Creating…" : "Create Invoice"}

@@ -65,14 +65,14 @@ export default function NewSupplierPage() {
                         <label className="text-xs font-medium text-zinc-500">Company Name *</label>
                         <input required value={form.name} onChange={(e) => set("name", e.target.value)}
                             placeholder="e.g. ABC Building Supplies"
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                     </div>
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-medium text-zinc-500">Email *</label>
                         <input required type="email" value={form.email} onChange={(e) => set("email", e.target.value)}
                             placeholder="orders@supplier.com"
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -80,13 +80,13 @@ export default function NewSupplierPage() {
                             <label className="text-xs font-medium text-zinc-500">Phone</label>
                             <input value={form.phone} onChange={(e) => set("phone", e.target.value)}
                                 placeholder="+353 1 000 0000"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-zinc-500">Website</label>
                             <input value={form.website} onChange={(e) => set("website", e.target.value)}
                                 placeholder="https://supplier.com"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                     </div>
 
@@ -110,20 +110,20 @@ export default function NewSupplierPage() {
                         <label className="text-xs font-medium text-zinc-500">Street</label>
                         <input value={form.street} onChange={(e) => set("street", e.target.value)}
                             placeholder="Unit 4, Industrial Estate"
-                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                            className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-zinc-500">Postcode</label>
                             <input value={form.postcode} onChange={(e) => set("postcode", e.target.value)}
                                 placeholder="D01 F5P2"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-zinc-500">City</label>
                             <input value={form.city} onChange={(e) => set("city", e.target.value)}
                                 placeholder="Dublin"
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300" />
                         </div>
                     </div>
                 </div>
@@ -134,7 +134,7 @@ export default function NewSupplierPage() {
                         Cancel
                     </button>
                     <button type="submit" disabled={isSubmitting}
-                        className="flex items-center gap-2 px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-orange-500/20 disabled:opacity-50">
+                        className="flex items-center gap-2 px-8 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20 disabled:opacity-50">
                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
                         {isSubmitting ? "Saving…" : "Add Supplier"}
                     </button>

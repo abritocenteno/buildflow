@@ -10,13 +10,13 @@ import { Id } from "@/convex/_generated/dataModel";
 const EVENT_TYPES = ["appointment", "milestone", "supplier_order", "inspection"];
 const TYPE_COLORS: Record<string, string> = {
     appointment: "bg-blue-100 text-blue-700",
-    milestone: "bg-orange-100 text-orange-700",
+    milestone: "bg-sky-100 text-sky-700",
     supplier_order: "bg-purple-100 text-purple-700",
     inspection: "bg-emerald-100 text-emerald-700",
 };
 const TYPE_DOT: Record<string, string> = {
     appointment: "bg-blue-500",
-    milestone: "bg-orange-500",
+    milestone: "bg-sky-500",
     supplier_order: "bg-purple-500",
     inspection: "bg-emerald-500",
 };
@@ -70,7 +70,7 @@ export default function SchedulePage() {
         setSaving(false);
     };
 
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const EventRow = ({ event }: { event: any }) => (
         <div className="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50 transition-colors group">
@@ -117,7 +117,7 @@ export default function SchedulePage() {
                         </button>
                     </div>
                     <button onClick={() => setShowForm(true)}
-                        className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
                         <Plus size={16} /> Add Event
                     </button>
                 </div>
@@ -148,7 +148,7 @@ export default function SchedulePage() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button type="submit" disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-50">
+                        <button type="submit" disabled={saving} className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-50">
                             {saving ? "Saving…" : "Add Event"}
                         </button>
                         <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100">Cancel</button>
@@ -195,7 +195,7 @@ export default function SchedulePage() {
                                                 "min-h-[88px] p-2 border-b border-zinc-100 transition-colors",
                                                 day ? "cursor-pointer" : "bg-zinc-50/40",
                                                 day && !isSelected && "hover:bg-zinc-50",
-                                                isSelected && "bg-orange-50/60",
+                                                isSelected && "bg-sky-50/60",
                                                 rowEnd && "border-r-0",
                                             )}
                                         >
@@ -203,8 +203,8 @@ export default function SchedulePage() {
                                                 <>
                                                     <div className={cn(
                                                         "w-7 h-7 flex items-center justify-center text-sm font-semibold rounded-full mb-1 transition-colors",
-                                                        isToday(day) ? "bg-orange-500 text-white" : "text-zinc-700",
-                                                        isSelected && !isToday(day) && "bg-orange-100 text-orange-700",
+                                                        isToday(day) ? "bg-sky-500 text-white" : "text-zinc-700",
+                                                        isSelected && !isToday(day) && "bg-sky-100 text-sky-700",
                                                     )}>
                                                         {day}
                                                     </div>

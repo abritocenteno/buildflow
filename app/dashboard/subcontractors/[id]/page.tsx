@@ -45,7 +45,7 @@ function insuranceStatus(ts?: number): "ok" | "expiring" | "expired" | "none" {
     return "ok";
 }
 
-const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 transition-all";
+const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 transition-all";
 
 function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
     const router = useRouter();
@@ -134,7 +134,7 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
             <h2 className="text-xl font-bold">Subcontractor not found</h2>
-            <button onClick={() => router.back()} className="text-sm text-orange-500 hover:underline">Go back</button>
+            <button onClick={() => router.back()} className="text-sm text-sky-500 hover:underline">Go back</button>
         </div>
     );
 
@@ -151,7 +151,7 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
                 </button>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+                        <div className="w-14 h-14 rounded-2xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
                             <HardHat size={26} />
                         </div>
                         <div>
@@ -198,16 +198,16 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
                         <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Contact Info</h2>
                         <div className="space-y-3">
-                            <a href={`mailto:${sub.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                            <a href={`mailto:${sub.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                 <Mail size={15} className="text-zinc-400 shrink-0" /> {sub.email}
                             </a>
                             {sub.phone && (
-                                <a href={`tel:${sub.phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                                <a href={`tel:${sub.phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                     <Phone size={15} className="text-zinc-400 shrink-0" /> {sub.phone}
                                 </a>
                             )}
                             {(sub as any).website && (
-                                <a href={(sub as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                                <a href={(sub as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                     <Globe size={15} className="text-zinc-400 shrink-0" /> {(sub as any).website}
                                 </a>
                             )}
@@ -261,9 +261,9 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
                                 {projects.map((p: any) => (
                                     <Link key={p._id} href={`/dashboard/projects/${p._id}`} className="flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors group">
                                         <div className="flex items-center gap-3">
-                                            <FolderKanban size={15} className="text-orange-400 shrink-0" />
+                                            <FolderKanban size={15} className="text-sky-400 shrink-0" />
                                             <div>
-                                                <p className="text-sm font-semibold text-zinc-900 group-hover:text-orange-500 transition-colors">{p.title}</p>
+                                                <p className="text-sm font-semibold text-zinc-900 group-hover:text-sky-500 transition-colors">{p.title}</p>
                                                 {p.client && <p className="text-xs text-zinc-400">{p.client.name}</p>}
                                             </div>
                                         </div>
@@ -388,7 +388,7 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setShowEdit(false)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
                                         {isSaving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                                         {isSaving ? "Saving…" : "Save Changes"}
                                     </button>
@@ -470,7 +470,7 @@ function SubcontractorDetail({ id }: { id: Id<"subcontractors"> }) {
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setEditContact(null)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
                                         {isSaving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                                         Save
                                     </button>

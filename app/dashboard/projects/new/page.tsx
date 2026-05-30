@@ -54,7 +54,7 @@ export default function NewProjectPage() {
         }
     };
 
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
     const labelCls = "block text-xs font-semibold text-zinc-600 mb-1.5";
 
     return (
@@ -152,7 +152,7 @@ export default function NewProjectPage() {
                     <button
                         type="submit"
                         disabled={saving}
-                        className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
                     >
                         <Save size={16} />
                         {saving ? "Creating…" : "Create Project"}

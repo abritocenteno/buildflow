@@ -22,6 +22,7 @@ import {
     HardHat,
     ClipboardList,
 } from "lucide-react";
+import Image from "next/image";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -61,14 +62,14 @@ const SidebarItem = ({
         className={cn(
             "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-xl group relative",
             active
-                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20"
                 : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
         )}
     >
         <Icon size={20} className="flex-shrink-0 transition-transform group-hover:scale-110" />
         {!collapsed && <span className="truncate">{label}</span>}
         {collapsed && active && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-r-full" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-sky-500 rounded-r-full" />
         )}
     </Link>
 );
@@ -96,12 +97,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     const Logo = () => (
         <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shadow-md shadow-orange-500/30">
-                <span className="font-black text-white text-base leading-none">B</span>
-            </div>
+            <Image
+                src="/arcocen-logo.png"
+                alt="Arcocen"
+                width={32}
+                height={32}
+                className="rounded-lg flex-shrink-0"
+            />
             {!collapsed && (
                 <span className="font-bold text-xl tracking-tight text-zinc-900">
-                    Build<span className="text-orange-500">Flow</span>
+                    Arco<span className="text-sky-500">cen</span>
                 </span>
             )}
         </div>
@@ -229,14 +234,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </div>
                             <div className="text-center space-y-2">
                                 <h2 className="text-2xl font-bold tracking-tight">Access Restricted</h2>
-                                <p className="text-zinc-500 max-w-sm">Please sign in to access the BuildFlow dashboard.</p>
+                                <p className="text-zinc-500 max-w-sm">Please sign in to access the Arcocen dashboard.</p>
                             </div>
                             <SessionRecoveryButton />
                         </div>
                     </Unauthenticated>
                     <AuthLoading>
                         <div className="h-full flex items-center justify-center py-24">
-                            <div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" />
+                            <div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" />
                         </div>
                     </AuthLoading>
                 </div>

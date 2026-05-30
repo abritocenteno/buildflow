@@ -18,7 +18,7 @@ const STATUSES = [
     { key: "closed", label: "Closed" },
 ];
 
-const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 transition-all";
+const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 transition-all";
 
 export default function EditProjectPage() {
     const { id } = useParams<{ id: string }>();
@@ -182,16 +182,16 @@ export default function EditProjectPage() {
                                         className={cn(
                                             "flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm text-left transition-all",
                                             selected
-                                                ? "bg-orange-50 border-orange-300 text-orange-700"
+                                                ? "bg-sky-50 border-sky-300 text-sky-700"
                                                 : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:border-zinc-300 hover:bg-zinc-100"
                                         )}
                                     >
-                                        <HardHat size={14} className={selected ? "text-orange-500" : "text-zinc-400"} />
+                                        <HardHat size={14} className={selected ? "text-sky-500" : "text-zinc-400"} />
                                         <div className="min-w-0 flex-1">
                                             <p className="font-medium truncate text-xs">{sub.name}</p>
                                             <p className="text-[10px] capitalize opacity-60">{sub.trade}</p>
                                         </div>
-                                        {selected && <CheckCircle2 size={14} className="text-orange-500 shrink-0" />}
+                                        {selected && <CheckCircle2 size={14} className="text-sky-500 shrink-0" />}
                                     </button>
                                 );
                             })}
@@ -212,7 +212,7 @@ export default function EditProjectPage() {
                         Cancel
                     </Link>
                     <button type="submit" disabled={isSaving}
-                        className="flex items-center gap-2 px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-orange-500/20 disabled:opacity-50">
+                        className="flex items-center gap-2 px-8 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20 disabled:opacity-50">
                         {isSaving ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
                         {isSaving ? "Saving…" : "Save Changes"}
                     </button>

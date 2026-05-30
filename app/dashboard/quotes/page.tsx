@@ -35,7 +35,7 @@ export default function QuotesPage() {
                 </div>
                 <Link
                     href="/dashboard/quotes/new"
-                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
                 >
                     <Plus size={16} />
                     New Quote
@@ -75,7 +75,7 @@ export default function QuotesPage() {
                                     <div className="flex flex-col items-center gap-3">
                                         <FileText size={32} className="text-zinc-300" />
                                         <p className="text-sm text-zinc-400">No quotes yet. Create your first one.</p>
-                                        <Link href="/dashboard/quotes/new" className="text-sm text-orange-500 font-medium hover:text-orange-600">Create quote →</Link>
+                                        <Link href="/dashboard/quotes/new" className="text-sm text-sky-500 font-medium hover:text-sky-600">Create quote →</Link>
                                     </div>
                                 </td>
                             </tr>
@@ -105,7 +105,7 @@ export default function QuotesPage() {
                                     </td>
                                     <td className="px-6 py-4 text-right font-semibold text-zinc-900">{formatCurrency(total)}</td>
                                     <td className="px-6 py-4">
-                                        <Link href={`/dashboard/quotes/${quote._id}`} className="text-zinc-400 hover:text-orange-500">
+                                        <Link href={`/dashboard/quotes/${quote._id}`} className="text-zinc-400 hover:text-sky-500">
                                             <ChevronRight size={18} />
                                         </Link>
                                     </td>

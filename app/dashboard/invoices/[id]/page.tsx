@@ -214,7 +214,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
             <h2 className="text-xl font-bold">Invoice not found</h2>
-            <button onClick={() => router.back()} className="text-sm text-orange-500 font-medium hover:underline">Go back</button>
+            <button onClick={() => router.back()} className="text-sm text-sky-500 font-medium hover:underline">Go back</button>
         </div>
     );
 
@@ -241,7 +241,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                         Back to Invoices
                     </button>
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+                        <div className="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
                             <FileText size={20} />
                         </div>
                         <div>
@@ -373,10 +373,10 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                     <div className="space-y-5 flex-1">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center text-white shrink-0">
                                 <span className="font-black text-lg">B</span>
                             </div>
-                            <span className="font-black text-2xl tracking-tight">{settings?.companyName || "BuildFlow"}</span>
+                            <span className="font-black text-2xl tracking-tight">{settings?.companyName || "Arcocen"}</span>
                         </div>
                         <div className="text-sm text-zinc-500 space-y-1 max-w-sm">
                             <p className="font-semibold text-zinc-800">{settings?.companyName}</p>
@@ -566,7 +566,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                         </div>
                         <div className="md:text-right self-end">
                             <p className="mb-1">Thank you for your business!</p>
-                            <p className="font-black text-zinc-800">© {new Date().getFullYear()} {settings?.companyName || "BuildFlow"}</p>
+                            <p className="font-black text-zinc-800">© {new Date().getFullYear()} {settings?.companyName || "Arcocen"}</p>
                         </div>
                     </div>
                 </div>
@@ -576,14 +576,14 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
             {project && (
                 <div className="bg-white rounded-2xl border border-zinc-200 p-4">
                     <Link href={`/dashboard/projects/${project._id}`} className="flex items-center gap-3 group">
-                        <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
+                        <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center text-sky-500">
                             <FolderKanban size={16} />
                         </div>
                         <div className="flex-1">
                             <p className="text-xs text-zinc-400 uppercase tracking-wider font-semibold">Linked Project</p>
-                            <p className="text-sm font-semibold text-zinc-900 group-hover:text-orange-500 transition-colors">{project.title}</p>
+                            <p className="text-sm font-semibold text-zinc-900 group-hover:text-sky-500 transition-colors">{project.title}</p>
                         </div>
-                        <ChevronDown size={16} className="text-zinc-300 group-hover:text-orange-500 -rotate-90 transition-colors" />
+                        <ChevronDown size={16} className="text-zinc-300 group-hover:text-sky-500 -rotate-90 transition-colors" />
                     </Link>
                 </div>
             )}

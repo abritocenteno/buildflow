@@ -15,7 +15,7 @@ export default function NewSubcontractorPage() {
     const [form, setForm] = useState({ name: "", trade: "electrical", email: "", phone: "", street: "", city: "", postcode: "", licenseNumber: "", notes: "" });
     const [saving, setSaving] = useState(false);
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,7 +43,7 @@ export default function NewSubcontractorPage() {
                 <div><label className="block text-xs font-semibold text-zinc-600 mb-1.5">Notes</label><textarea className={inputCls} rows={2} value={form.notes} onChange={(e) => set("notes", e.target.value)} /></div>
                 <div className="flex justify-end gap-3">
                     <Link href="/dashboard/subcontractors" className="px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-100 rounded-xl">Cancel</Link>
-                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium"><Save size={16} />{saving ? "Saving…" : "Create"}</button>
+                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium"><Save size={16} />{saving ? "Saving…" : "Create"}</button>
                 </div>
             </form>
         </div>

@@ -22,7 +22,7 @@ export default function OrdersPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Purchase Orders</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{orders.length} orders</p>
                 </div>
-                <Link href="/dashboard/orders/new" className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                <Link href="/dashboard/orders/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
                     <Plus size={16} /> New Order
                 </Link>
             </div>
@@ -60,7 +60,7 @@ export default function OrdersPage() {
                                 </td>
                                 <td className="px-6 py-4 text-right font-semibold text-zinc-900">{formatCurrency(order.amount)}</td>
                                 <td className="px-6 py-4">
-                                    <Link href={`/dashboard/orders/${order._id}`} className="text-zinc-400 hover:text-orange-500">
+                                    <Link href={`/dashboard/orders/${order._id}`} className="text-zinc-400 hover:text-sky-500">
                                         <ChevronRight size={18} />
                                     </Link>
                                 </td>

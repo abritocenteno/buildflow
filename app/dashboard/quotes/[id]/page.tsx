@@ -37,7 +37,7 @@ export default function QuoteDetailPage() {
     const [saving, setSaving] = useState(false);
 
     if (quote === undefined) {
-        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
     }
     if (quote === null) {
         return <div className="text-center py-24 text-zinc-500">Quote not found</div>;
@@ -69,7 +69,7 @@ export default function QuoteDetailPage() {
         }
     };
 
-    const inputCls = "w-full px-3 py-2 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -116,7 +116,7 @@ export default function QuoteDetailPage() {
                     {quote.status === "approved" && !quote.convertedToProjectId && (
                         <button
                             onClick={() => { setConvertForm({ title: quote.client?.name ? `${quote.client.name} Project` : "", siteAddress: "", startDate: "", endDate: "" }); setShowConvert(true); }}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-medium transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-medium transition-colors"
                         >
                             <FolderKanban size={14} /> Convert to Project
                         </button>
@@ -134,7 +134,7 @@ export default function QuoteDetailPage() {
 
             {/* Convert to Project modal */}
             {showConvert && (
-                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-5 space-y-3">
+                <div className="bg-sky-50 border border-sky-200 rounded-2xl p-5 space-y-3">
                     <h3 className="font-semibold text-zinc-900 text-sm">Convert to Project</h3>
                     <input className={inputCls} placeholder="Project title" value={convertForm.title} onChange={(e) => setConvertForm({ ...convertForm, title: e.target.value })} />
                     <input className={inputCls} placeholder="Site address (optional)" value={convertForm.siteAddress} onChange={(e) => setConvertForm({ ...convertForm, siteAddress: e.target.value })} />
@@ -143,7 +143,7 @@ export default function QuoteDetailPage() {
                         <input type="date" className={inputCls} value={convertForm.endDate} onChange={(e) => setConvertForm({ ...convertForm, endDate: e.target.value })} />
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={handleConvert} disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium">
+                        <button onClick={handleConvert} disabled={saving} className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium">
                             {saving ? "Creating…" : "Create Project"}
                         </button>
                         <button onClick={() => setShowConvert(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100">Cancel</button>
@@ -209,7 +209,7 @@ export default function QuoteDetailPage() {
                     )}
                     <div className="flex justify-between text-base font-bold border-t border-zinc-100 pt-3 mt-2">
                         <span>Total</span>
-                        <span className="text-orange-600">{formatCurrency(total)}</span>
+                        <span className="text-sky-600">{formatCurrency(total)}</span>
                     </div>
                 </div>
 

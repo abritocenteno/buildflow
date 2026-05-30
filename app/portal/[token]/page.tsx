@@ -9,7 +9,7 @@ import { Building2, FileText, ClipboardList, FolderKanban } from "lucide-react";
 const STATUS_COLORS: Record<string, string> = {
     planning: "bg-zinc-100 text-zinc-600",
     permitting: "bg-blue-100 text-blue-700",
-    in_progress: "bg-orange-100 text-orange-700",
+    in_progress: "bg-sky-100 text-sky-700",
     punch_list: "bg-amber-100 text-amber-700",
     completed: "bg-emerald-100 text-emerald-700",
     closed: "bg-zinc-200 text-zinc-500",
@@ -31,7 +31,7 @@ export default function ClientPortalPage() {
     if (data === undefined) {
         return (
             <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" />
             </div>
         );
     }
@@ -55,10 +55,10 @@ export default function ClientPortalPage() {
             <header className="bg-white border-b border-zinc-200 px-6 py-4">
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center">
                             <span className="font-black text-white text-base">B</span>
                         </div>
-                        <span className="font-bold text-lg tracking-tight">Build<span className="text-orange-500">Flow</span></span>
+                        <span className="font-bold text-lg tracking-tight">Build<span className="text-sky-500">Flow</span></span>
                     </div>
                     <div className="text-right">
                         <p className="text-sm font-semibold text-zinc-900">{client?.name}</p>
@@ -77,7 +77,7 @@ export default function ClientPortalPage() {
                 {projects.length > 0 && (
                     <div className="space-y-4">
                         <h2 className="font-semibold text-zinc-900 flex items-center gap-2">
-                            <FolderKanban size={18} className="text-orange-500" /> Projects
+                            <FolderKanban size={18} className="text-sky-500" /> Projects
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {projects.map((project: any) => (
@@ -98,7 +98,7 @@ export default function ClientPortalPage() {
                                                 <span className="text-xs font-medium text-zinc-600">{project.progress}%</span>
                                             </div>
                                             <div className="h-2 bg-zinc-100 rounded-full">
-                                                <div className="h-2 bg-orange-500 rounded-full" style={{ width: `${project.progress}%` }} />
+                                                <div className="h-2 bg-sky-500 rounded-full" style={{ width: `${project.progress}%` }} />
                                             </div>
                                         </div>
                                     )}

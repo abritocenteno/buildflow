@@ -39,7 +39,7 @@ function StatCard({ label, value, sub, icon: Icon, color }: {
 const STATUS_COLORS: Record<string, string> = {
     planning: "bg-zinc-100 text-zinc-600",
     permitting: "bg-blue-100 text-blue-700",
-    in_progress: "bg-orange-100 text-orange-700",
+    in_progress: "bg-sky-100 text-sky-700",
     punch_list: "bg-amber-100 text-amber-700",
     completed: "bg-emerald-100 text-emerald-700",
     closed: "bg-zinc-200 text-zinc-500",
@@ -65,7 +65,7 @@ export default function DashboardPage() {
     if (!reports) {
         return (
             <div className="flex items-center justify-center py-24">
-                <div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" />
             </div>
         );
     }
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                     value={String(reports.activeProjects)}
                     sub={`${reports.completedProjects} completed`}
                     icon={FolderKanban}
-                    color="bg-orange-500"
+                    color="bg-sky-500"
                 />
                 <StatCard
                     label="Open Quotes"
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                 <div className="bg-white rounded-2xl border border-zinc-200">
                     <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
                         <h2 className="font-semibold text-zinc-900">Active Projects</h2>
-                        <Link href="/dashboard/projects" className="text-xs text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1">
+                        <Link href="/dashboard/projects" className="text-xs text-sky-500 hover:text-sky-600 font-medium flex items-center gap-1">
                             View all <ArrowRight size={12} />
                         </Link>
                     </div>
@@ -130,8 +130,8 @@ export default function DashboardPage() {
                                 href={`/dashboard/projects/${project._id}`}
                                 className="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50 transition-colors"
                             >
-                                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <Building2 size={18} className="text-orange-500" />
+                                <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <Building2 size={18} className="text-sky-500" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-zinc-900 truncate">{project.title}</p>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                 <div className="bg-white rounded-2xl border border-zinc-200">
                     <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
                         <h2 className="font-semibold text-zinc-900">Overdue Invoices</h2>
-                        <Link href="/dashboard/invoices" className="text-xs text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1">
+                        <Link href="/dashboard/invoices" className="text-xs text-sky-500 hover:text-sky-600 font-medium flex items-center gap-1">
                             View all <ArrowRight size={12} />
                         </Link>
                     </div>
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                         return (
                             <div key={i} className="flex-1 flex items-end justify-center group cursor-default"
                                 title={`${m.month}: ${formatCurrency(m.revenue)}`}>
-                                <div className="w-full bg-orange-400 group-hover:bg-orange-500 rounded-t-md transition-colors"
+                                <div className="w-full bg-sky-400 group-hover:bg-sky-500 rounded-t-md transition-colors"
                                     style={{ height: `${height}px` }} />
                             </div>
                         );

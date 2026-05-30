@@ -32,7 +32,7 @@ export function NotificationBell() {
             >
                 <Bell size={18} />
                 {unread.length > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-sky-500 rounded-full" />
                 )}
             </button>
 
@@ -58,7 +58,7 @@ export function NotificationBell() {
                         {notifications.map((n) => (
                             <div
                                 key={n.key}
-                                className={`px-4 py-3 hover:bg-zinc-50 transition-colors ${!n.read ? "bg-orange-50" : ""}`}
+                                className={`px-4 py-3 hover:bg-zinc-50 transition-colors ${!n.read ? "bg-sky-50" : ""}`}
                             >
                                 <p className="text-sm font-medium text-zinc-900">{n.title}</p>
                                 <p className="text-xs text-zinc-500 mt-0.5">{n.message}</p>

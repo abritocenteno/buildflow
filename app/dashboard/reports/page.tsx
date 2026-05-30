@@ -9,7 +9,7 @@ import { TrendingUp, Clock, FolderKanban, ShoppingBag, AlertCircle, ChevronRight
 const STATUS_COLORS: Record<string, string> = {
     planning: "bg-zinc-100 text-zinc-600",
     permitting: "bg-blue-100 text-blue-700",
-    in_progress: "bg-orange-100 text-orange-700",
+    in_progress: "bg-sky-100 text-sky-700",
     punch_list: "bg-amber-100 text-amber-700",
     completed: "bg-emerald-100 text-emerald-700",
     closed: "bg-zinc-200 text-zinc-500",
@@ -38,7 +38,7 @@ export default function ReportsPage() {
     const clientRevenue = useQuery(api.reports.clientRevenue) ?? [];
 
     if (!reports) {
-        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-orange-500 rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
     }
 
     const maxRevenue = Math.max(...reports.monthlyRevenue.map((m: any) => m.revenue), 1);
@@ -61,7 +61,7 @@ export default function ReportsPage() {
             {/* Project counts */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: "Active Projects", value: reports.activeProjects, color: "text-orange-600" },
+                    { label: "Active Projects", value: reports.activeProjects, color: "text-sky-600" },
                     { label: "Completed", value: reports.completedProjects, color: "text-emerald-600" },
                     { label: "Open Quotes", value: reports.pendingQuotes, color: "text-blue-600" },
                     { label: "Approved Quotes", value: reports.approvedQuotes, color: "text-purple-600" },
@@ -82,7 +82,7 @@ export default function ReportsPage() {
                         return (
                             <div key={i} className="flex-1 flex items-end justify-center group cursor-default"
                                 title={`${m.month}: ${formatCurrency(m.revenue)}`}>
-                                <div className="w-full bg-orange-400 group-hover:bg-orange-500 rounded-t-md transition-colors"
+                                <div className="w-full bg-sky-400 group-hover:bg-sky-500 rounded-t-md transition-colors"
                                     style={{ height: `${barHeight}px` }} />
                             </div>
                         );
@@ -121,7 +121,7 @@ export default function ReportsPage() {
                                     return (
                                         <tr key={p._id} className="hover:bg-zinc-50/50 transition-colors group">
                                             <td className="px-6 py-3">
-                                                <Link href={`/dashboard/projects/${p._id}`} className="font-semibold text-zinc-900 group-hover:text-orange-500 transition-colors flex items-center gap-1">
+                                                <Link href={`/dashboard/projects/${p._id}`} className="font-semibold text-zinc-900 group-hover:text-sky-500 transition-colors flex items-center gap-1">
                                                     {p.title}
                                                     <ChevronRight size={13} className="text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 </Link>
@@ -142,7 +142,7 @@ export default function ReportsPage() {
                                                 <div className="flex items-center justify-end gap-2">
                                                     {p.invoiced > 0 && (
                                                         <div className="w-16 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                                                            <div className={cn("h-1.5 rounded-full", pct >= 100 ? "bg-emerald-500" : pct > 50 ? "bg-orange-400" : "bg-amber-400")}
+                                                            <div className={cn("h-1.5 rounded-full", pct >= 100 ? "bg-emerald-500" : pct > 50 ? "bg-sky-400" : "bg-amber-400")}
                                                                 style={{ width: `${Math.min(pct, 100)}%` }} />
                                                         </div>
                                                     )}
@@ -181,7 +181,7 @@ export default function ReportsPage() {
                                             <p className="text-sm font-bold text-zinc-900 shrink-0 ml-4">{formatCurrency(total)}</p>
                                         </div>
                                         <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                                            <div className="h-1.5 bg-orange-400 rounded-full" style={{ width: `${barPct}%` }} />
+                                            <div className="h-1.5 bg-sky-400 rounded-full" style={{ width: `${barPct}%` }} />
                                         </div>
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <span className="text-xs text-emerald-600 font-medium">{formatCurrency(c.paid)} paid</span>

@@ -13,7 +13,7 @@ export default function NewClientPage() {
     const [form, setForm] = useState({ name: "", email: "", type: "individual", phone: "", website: "", street: "", postcode: "", city: "" });
     const [saving, setSaving] = useState(false);
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +41,7 @@ export default function NewClientPage() {
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
                     <Link href="/dashboard/clients" className="px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-100 rounded-xl">Cancel</Link>
-                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium"><Save size={16} />{saving ? "Saving…" : "Create Client"}</button>
+                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium"><Save size={16} />{saving ? "Saving…" : "Create Client"}</button>
                 </div>
             </form>
         </div>

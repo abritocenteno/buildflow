@@ -29,7 +29,7 @@ function AccessDenied() {
                 <div className="space-y-2">
                     <h1 className="text-xl font-bold tracking-tight text-zinc-900">Access Denied</h1>
                     <p className="text-sm text-zinc-500 leading-relaxed">
-                        Your account is not authorised to use BuildFlow. Please contact the administrator if you believe this is a mistake.
+                        Your account is not authorised to use Arcocen. Please contact the administrator if you believe this is a mistake.
                     </p>
                 </div>
                 <button

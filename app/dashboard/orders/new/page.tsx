@@ -86,7 +86,7 @@ function NewOrderForm() {
                                 <Truck size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                                 <select required value={form.supplierId}
                                     onChange={(e) => setForm((p) => ({ ...p, supplierId: e.target.value as Id<"suppliers"> }))}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none">
+                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 appearance-none">
                                     <option value="" disabled>Select supplier…</option>
                                     {suppliers.map((s: any) => <option key={s._id} value={s._id}>{s.name}</option>)}
                                 </select>
@@ -100,7 +100,7 @@ function NewOrderForm() {
                                 <FolderKanban size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                                 <select value={form.projectId}
                                     onChange={(e) => setForm((p) => ({ ...p, projectId: e.target.value as Id<"projects"> }))}
-                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 appearance-none">
+                                    className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 appearance-none">
                                     <option value="">No project</option>
                                     {projects.map((p: any) => <option key={p._id} value={p._id}>{p.title}</option>)}
                                 </select>
@@ -112,7 +112,7 @@ function NewOrderForm() {
                             <label className="text-xs font-medium text-zinc-500">Order Date *</label>
                             <input type="date" required value={form.date}
                                 onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                         </div>
                     </div>
                 </div>
@@ -158,13 +158,13 @@ function NewOrderForm() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <input type="number" min="1" value={item.amount} onChange={(e) => updateItem(i, "amount", parseInt(e.target.value) || 1)}
-                                                className="w-14 mx-auto block bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-center py-1 focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                                className="w-14 mx-auto block bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-center py-1 focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-end gap-1">
                                                 <span className="text-xs text-zinc-400">{sym}</span>
                                                 <input type="number" step="0.01" min="0" value={item.unitPrice || ""} placeholder="0.00" onChange={(e) => updateItem(i, "unitPrice", parseFloat(e.target.value) || 0)}
-                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                                    className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-right py-1 px-2 focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-right">
@@ -193,7 +193,7 @@ function NewOrderForm() {
 
                 <div className="flex items-center justify-end gap-3">
                     <button type="button" onClick={() => router.back()} className="px-6 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-50 transition-colors">Cancel</button>
-                    <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 px-8 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-orange-500/20 disabled:opacity-50">
+                    <button type="submit" disabled={isSubmitting} className="flex items-center gap-2 px-8 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20 disabled:opacity-50">
                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
                         {isSubmitting ? "Creating…" : "Create Order"}
                     </button>

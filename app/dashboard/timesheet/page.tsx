@@ -50,7 +50,7 @@ export default function TimesheetPage() {
         }
     };
 
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     return (
         <div className="space-y-6">
@@ -63,7 +63,7 @@ export default function TimesheetPage() {
                 </div>
                 <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
                 >
                     <Plus size={16} /> Log Time
                 </button>
@@ -101,7 +101,7 @@ export default function TimesheetPage() {
                             <input type="number" min={0} step="0.01" className={inputCls} placeholder="0.00" value={form.hourlyRate} onChange={(e) => setForm({ ...form, hourlyRate: e.target.value })} />
                         </div>
                         <div className="flex items-center gap-3 pt-5">
-                            <input type="checkbox" id="billable" checked={form.billable} onChange={(e) => setForm({ ...form, billable: e.target.checked })} className="w-4 h-4 accent-orange-500" />
+                            <input type="checkbox" id="billable" checked={form.billable} onChange={(e) => setForm({ ...form, billable: e.target.checked })} className="w-4 h-4 accent-sky-500" />
                             <label htmlFor="billable" className="text-sm text-zinc-700 font-medium">Billable</label>
                         </div>
                         <div className="col-span-2">
@@ -110,7 +110,7 @@ export default function TimesheetPage() {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <button type="submit" disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium">
+                        <button type="submit" disabled={saving} className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-medium">
                             {saving ? "Saving…" : "Log Time"}
                         </button>
                         <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100">Cancel</button>

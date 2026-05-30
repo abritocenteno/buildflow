@@ -95,7 +95,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
     };
 
     if (supplier === undefined) return <div className="flex items-center justify-center py-32"><Loader2 className="animate-spin text-zinc-300" size={32} /></div>;
-    if (supplier === null) return <div className="text-center py-32"><p className="text-zinc-500">Supplier not found.</p><button onClick={() => router.back()} className="mt-4 text-sm text-orange-500 hover:underline">Go back</button></div>;
+    if (supplier === null) return <div className="text-center py-32"><p className="text-zinc-500">Supplier not found.</p><button onClick={() => router.back()} className="mt-4 text-sm text-sky-500 hover:underline">Go back</button></div>;
 
     const totalSpend = orders?.reduce((s: number, o: any) => s + o.amount, 0) ?? 0;
 
@@ -153,7 +153,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                             {supplier.website && (
                                 <div className="flex items-center gap-3 text-sm">
                                     <Globe size={15} className="text-zinc-400 shrink-0" />
-                                    <a href={supplier.website} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline truncate">{supplier.website.replace(/^https?:\/\//, "")}</a>
+                                    <a href={supplier.website} target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline truncate">{supplier.website.replace(/^https?:\/\//, "")}</a>
                                 </div>
                             )}
                             {(supplier.street || supplier.city) && (
@@ -189,7 +189,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-4">
                         <div className="flex items-center justify-between">
                             <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Contacts</h3>
-                            <button onClick={() => setIsAddContact(true)} className="p-1 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors">
+                            <button onClick={() => setIsAddContact(true)} className="p-1 text-zinc-400 hover:text-sky-500 hover:bg-sky-50 rounded-lg transition-colors">
                                 <Plus size={16} />
                             </button>
                         </div>
@@ -230,7 +230,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-bold text-zinc-900">Purchase Orders</h2>
                         <Link href={`/dashboard/orders/new?supplierId=${supplierId}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-medium transition-colors">
+                            className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-medium transition-colors">
                             <Plus size={15} /> New Order
                         </Link>
                     </div>
@@ -271,7 +271,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                                             </td>
                                             <td className="px-6 py-4 text-right font-semibold text-zinc-900">{formatCurrency(o.amount, settings?.currency)}</td>
                                             <td className="px-4 py-4">
-                                                <Link href={`/dashboard/orders/${o._id}`} className="text-zinc-300 hover:text-orange-500 transition-colors">
+                                                <Link href={`/dashboard/orders/${o._id}`} className="text-zinc-300 hover:text-sky-500 transition-colors">
                                                     <ChevronRight size={16} />
                                                 </Link>
                                             </td>
@@ -297,19 +297,19 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Company Name *</label>
-                                    <input required value={editDraft.name} onChange={(e) => setEditDraft((p) => ({ ...p, name: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input required value={editDraft.name} onChange={(e) => setEditDraft((p) => ({ ...p, name: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Email *</label>
-                                    <input required type="email" value={editDraft.email} onChange={(e) => setEditDraft((p) => ({ ...p, email: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input required type="email" value={editDraft.email} onChange={(e) => setEditDraft((p) => ({ ...p, email: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Phone</label>
-                                    <input value={editDraft.phone} onChange={(e) => setEditDraft((p) => ({ ...p, phone: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editDraft.phone} onChange={(e) => setEditDraft((p) => ({ ...p, phone: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Website</label>
-                                    <input value={editDraft.website} onChange={(e) => setEditDraft((p) => ({ ...p, website: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editDraft.website} onChange={(e) => setEditDraft((p) => ({ ...p, website: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Type</label>
@@ -324,15 +324,15 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Street</label>
-                                    <input value={editDraft.street} onChange={(e) => setEditDraft((p) => ({ ...p, street: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editDraft.street} onChange={(e) => setEditDraft((p) => ({ ...p, street: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Postcode</label>
-                                    <input value={editDraft.postcode} onChange={(e) => setEditDraft((p) => ({ ...p, postcode: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editDraft.postcode} onChange={(e) => setEditDraft((p) => ({ ...p, postcode: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">City</label>
-                                    <input value={editDraft.city} onChange={(e) => setEditDraft((p) => ({ ...p, city: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editDraft.city} onChange={(e) => setEditDraft((p) => ({ ...p, city: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                             </div>
                             <div className="flex gap-3 pt-2">
@@ -358,21 +358,21 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                         <form onSubmit={handleAddContact} className="space-y-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-zinc-500">Name *</label>
-                                <input required value={newContact.name} onChange={(e) => setNewContact((p) => ({ ...p, name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                <input required value={newContact.name} onChange={(e) => setNewContact((p) => ({ ...p, name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Email</label>
-                                    <input type="email" value={newContact.email} onChange={(e) => setNewContact((p) => ({ ...p, email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input type="email" value={newContact.email} onChange={(e) => setNewContact((p) => ({ ...p, email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Phone</label>
-                                    <input value={newContact.phone} onChange={(e) => setNewContact((p) => ({ ...p, phone: e.target.value }))} placeholder="+353…" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={newContact.phone} onChange={(e) => setNewContact((p) => ({ ...p, phone: e.target.value }))} placeholder="+353…" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-zinc-500">Role</label>
-                                <input value={newContact.role} onChange={(e) => setNewContact((p) => ({ ...p, role: e.target.value }))} placeholder="Account Manager" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                <input value={newContact.role} onChange={(e) => setNewContact((p) => ({ ...p, role: e.target.value }))} placeholder="Account Manager" className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                             </div>
                             <div className="flex gap-3 pt-1">
                                 <button type="button" onClick={() => setIsAddContact(false)} className="flex-1 py-2.5 border border-zinc-200 rounded-xl text-sm font-medium text-zinc-600">Cancel</button>
@@ -397,21 +397,21 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                         <form onSubmit={handleSaveContact} className="space-y-4">
                             <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-zinc-500">Name *</label>
-                                <input required value={editContactDraft.name} onChange={(e) => setEditContactDraft((p) => ({ ...p, name: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                <input required value={editContactDraft.name} onChange={(e) => setEditContactDraft((p) => ({ ...p, name: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Email</label>
-                                    <input type="email" value={editContactDraft.email} onChange={(e) => setEditContactDraft((p) => ({ ...p, email: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input type="email" value={editContactDraft.email} onChange={(e) => setEditContactDraft((p) => ({ ...p, email: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-medium text-zinc-500">Phone</label>
-                                    <input value={editContactDraft.phone} onChange={(e) => setEditContactDraft((p) => ({ ...p, phone: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                    <input value={editContactDraft.phone} onChange={(e) => setEditContactDraft((p) => ({ ...p, phone: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                                 </div>
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-zinc-500">Role</label>
-                                <input value={editContactDraft.role} onChange={(e) => setEditContactDraft((p) => ({ ...p, role: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                <input value={editContactDraft.role} onChange={(e) => setEditContactDraft((p) => ({ ...p, role: e.target.value }))} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                             </div>
                             <div className="flex gap-3 pt-1">
                                 <button type="button" onClick={() => setEditContact(null)} className="flex-1 py-2.5 border border-zinc-200 rounded-xl text-sm font-medium text-zinc-600">Cancel</button>

@@ -16,7 +16,7 @@ import { cn, formatCurrency } from "@/lib/utils";
 const UNITS = ["pcs", "m", "m²", "m³", "kg", "t", "L", "bag", "roll", "sheet", "box"];
 const CATEGORIES = ["Concrete & Masonry", "Steel & Metalwork", "Timber & Wood", "Electrical", "Plumbing", "Insulation", "Roofing", "Finishing", "Tools", "Safety", "Other"];
 
-const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 transition-all";
+const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 transition-all";
 
 function MaterialDetail({ id }: { id: Id<"materials"> }) {
     const router = useRouter();
@@ -94,7 +94,7 @@ function MaterialDetail({ id }: { id: Id<"materials"> }) {
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
             <h2 className="text-xl font-bold">Material not found</h2>
-            <button onClick={() => router.back()} className="text-sm text-orange-500 hover:underline">Go back</button>
+            <button onClick={() => router.back()} className="text-sm text-sky-500 hover:underline">Go back</button>
         </div>
     );
 
@@ -170,7 +170,7 @@ function MaterialDetail({ id }: { id: Id<"materials"> }) {
                         <div className="flex items-center gap-2">
                             <div className="relative">
                                 <select value={adjustMode} onChange={(e) => setAdjustMode(e.target.value as any)}
-                                    className="px-3 pr-7 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs appearance-none focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+                                    className="px-3 pr-7 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs appearance-none focus:outline-none focus:ring-2 focus:ring-sky-500/20">
                                     <option value="add">Add</option>
                                     <option value="sub">Remove</option>
                                     <option value="set">Set to</option>
@@ -178,7 +178,7 @@ function MaterialDetail({ id }: { id: Id<"materials"> }) {
                                 <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                             </div>
                             <input type="number" min="0" step="0.01" value={adjustQty} onChange={(e) => setAdjustQty(e.target.value)}
-                                placeholder="0" className="flex-1 px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20" />
+                                placeholder="0" className="flex-1 px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20" />
                             <button onClick={handleAdjust} disabled={!adjustQty}
                                 className="px-3 py-1.5 bg-zinc-900 text-white rounded-lg text-xs font-medium hover:bg-black transition-colors disabled:opacity-40">
                                 Update
@@ -221,8 +221,8 @@ function MaterialDetail({ id }: { id: Id<"materials"> }) {
                         <div>
                             <p className="text-xs text-zinc-400 mb-1.5">Linked Project</p>
                             <Link href={`/dashboard/projects/${linkedProject._id}`}
-                                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 hover:text-orange-500 transition-colors">
-                                <FolderKanban size={14} className="text-orange-400" />
+                                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 hover:text-sky-500 transition-colors">
+                                <FolderKanban size={14} className="text-sky-400" />
                                 {linkedProject.title}
                             </Link>
                         </div>
@@ -303,7 +303,7 @@ function MaterialDetail({ id }: { id: Id<"materials"> }) {
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setShowEdit(false)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
                                         {isSaving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                                         {isSaving ? "Saving…" : "Save Changes"}
                                     </button>

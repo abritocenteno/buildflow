@@ -79,7 +79,7 @@ export default function NewQuotePage() {
         }
     };
 
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
     const labelCls = "block text-xs font-semibold text-zinc-600 mb-1.5";
 
     return (
@@ -121,7 +121,7 @@ export default function NewQuotePage() {
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
                     <div className="flex items-center justify-between">
                         <h2 className="font-semibold text-sm text-zinc-900">Line Items</h2>
-                        <button type="button" onClick={addItem} className="flex items-center gap-1.5 text-xs text-orange-500 hover:text-orange-600 font-medium">
+                        <button type="button" onClick={addItem} className="flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 font-medium">
                             <Plus size={14} /> Add Item
                         </button>
                     </div>
@@ -179,7 +179,7 @@ export default function NewQuotePage() {
                         </div>
                         <div className="flex items-center justify-between text-base font-bold border-t border-zinc-100 pt-2 mt-2">
                             <span className="text-zinc-900">Total</span>
-                            <span className="text-orange-600">{formatCurrency(total)}</span>
+                            <span className="text-sky-600">{formatCurrency(total)}</span>
                         </div>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ export default function NewQuotePage() {
 
                 <div className="flex justify-end gap-3">
                     <Link href="/dashboard/quotes" className="px-4 py-2.5 text-sm font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-all">Cancel</Link>
-                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors">
                         <Save size={16} />
                         {saving ? "Creating…" : "Create Quote"}
                     </button>

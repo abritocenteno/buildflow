@@ -71,7 +71,7 @@ export function GlobalSearch() {
                                     onClick={() => setOpen(false)}
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-50 transition-colors"
                                 >
-                                    <FolderKanban size={16} className="text-orange-500 flex-shrink-0" />
+                                    <FolderKanban size={16} className="text-sky-500 flex-shrink-0" />
                                     <div>
                                         <p className="text-sm font-medium text-zinc-900">{p.title}</p>
                                         <p className="text-xs text-zinc-500">{p.siteAddress}</p>

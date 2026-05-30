@@ -13,7 +13,7 @@ const TRADE_COLORS: Record<string, string> = {
     hvac: "bg-cyan-100 text-cyan-700",
     carpentry: "bg-amber-100 text-amber-700",
     masonry: "bg-stone-100 text-stone-700",
-    roofing: "bg-orange-100 text-orange-700",
+    roofing: "bg-sky-100 text-sky-700",
     painting: "bg-purple-100 text-purple-700",
     tiling: "bg-emerald-100 text-emerald-700",
     other: "bg-zinc-100 text-zinc-600",
@@ -38,14 +38,14 @@ export default function SubcontractorsPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Subcontractors</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{subcontractors.length} subcontractors</p>
                 </div>
-                <Link href="/dashboard/subcontractors/new" className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                <Link href="/dashboard/subcontractors/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
                     <Plus size={16} /> Add Subcontractor
                 </Link>
             </div>
 
             <div className="relative">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or trade…" className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all" />
+                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or trade…" className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 transition-all" />
             </div>
 
             <div className="bg-white rounded-2xl border border-zinc-200 divide-y divide-zinc-100">
@@ -63,8 +63,8 @@ export default function SubcontractorsPage() {
                             href={`/dashboard/subcontractors/${sub._id}`}
                             className="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50 transition-colors"
                         >
-                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                                <HardHat size={18} className="text-orange-600" />
+                            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
+                                <HardHat size={18} className="text-sky-600" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">

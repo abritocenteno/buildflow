@@ -26,13 +26,13 @@ const INV_BADGE: Record<string, string> = {
 const PROJ_BADGE: Record<string, string> = {
     planning: "bg-zinc-100 text-zinc-600",
     permitting: "bg-blue-100 text-blue-700",
-    in_progress: "bg-orange-100 text-orange-700",
+    in_progress: "bg-sky-100 text-sky-700",
     punch_list: "bg-amber-100 text-amber-700",
     completed: "bg-emerald-100 text-emerald-700",
     closed: "bg-zinc-200 text-zinc-500",
 };
 
-const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 transition-all";
+const inputCls = "w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 transition-all";
 
 export default function ClientDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -116,7 +116,7 @@ export default function ClientDetailPage() {
         <div className="flex flex-col items-center justify-center py-32 space-y-4">
             <AlertCircle className="text-red-400" size={40} />
             <h2 className="text-xl font-bold">Client not found</h2>
-            <button onClick={() => router.back()} className="text-sm text-orange-500 hover:underline">Go back</button>
+            <button onClick={() => router.back()} className="text-sm text-sky-500 hover:underline">Go back</button>
         </div>
     );
 
@@ -137,7 +137,7 @@ export default function ClientDetailPage() {
                 </button>
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 shrink-0">
+                        <div className="w-14 h-14 rounded-2xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20 shrink-0">
                             <Building2 size={26} />
                         </div>
                         <div>
@@ -163,7 +163,7 @@ export default function ClientDetailPage() {
                 {[
                     { label: "Total Revenue", value: formatCurrency(totalRevenue, settings?.currency), icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
                     { label: "Outstanding", value: formatCurrency(outstanding, settings?.currency), icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
-                    { label: "Active Projects", value: String(activeProjects), icon: FolderKanban, color: "text-orange-600", bg: "bg-orange-50" },
+                    { label: "Active Projects", value: String(activeProjects), icon: FolderKanban, color: "text-sky-600", bg: "bg-sky-50" },
                     { label: "Total Projects", value: String(clientProjects.length), icon: FolderKanban, color: "text-zinc-600", bg: "bg-zinc-100" },
                 ].map(({ label, value, icon: Icon, color, bg }) => (
                     <div key={label} className="bg-white rounded-2xl border border-zinc-200 p-4">
@@ -183,17 +183,17 @@ export default function ClientDetailPage() {
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-3">
                         <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Contact Info</h2>
                         {client.email && (
-                            <a href={`mailto:${client.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                            <a href={`mailto:${client.email}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                 <Mail size={15} className="text-zinc-400 shrink-0" /> {client.email}
                             </a>
                         )}
                         {(client as any).phone && (
-                            <a href={`tel:${(client as any).phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                            <a href={`tel:${(client as any).phone}`} className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                 <Phone size={15} className="text-zinc-400 shrink-0" /> {(client as any).phone}
                             </a>
                         )}
                         {(client as any).website && (
-                            <a href={(client as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-orange-500 transition-colors">
+                            <a href={(client as any).website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-zinc-700 hover:text-sky-500 transition-colors">
                                 <Globe size={15} className="text-zinc-400 shrink-0" /> {(client as any).website}
                             </a>
                         )}
@@ -209,7 +209,7 @@ export default function ClientDetailPage() {
                         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
                             <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Projects</h2>
                             <Link href={`/dashboard/projects/new?clientId=${id}`}
-                                className="flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors">
+                                className="flex items-center gap-1 text-xs font-medium text-sky-500 hover:text-sky-600 transition-colors">
                                 <Plus size={13} /> New
                             </Link>
                         </div>
@@ -221,8 +221,8 @@ export default function ClientDetailPage() {
                                     <Link key={p._id} href={`/dashboard/projects/${p._id}`}
                                         className="flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors group">
                                         <div className="flex items-center gap-3 min-w-0">
-                                            <FolderKanban size={14} className="text-orange-400 shrink-0" />
-                                            <p className="text-sm font-semibold text-zinc-900 truncate group-hover:text-orange-500 transition-colors">{p.title}</p>
+                                            <FolderKanban size={14} className="text-sky-400 shrink-0" />
+                                            <p className="text-sm font-semibold text-zinc-900 truncate group-hover:text-sky-500 transition-colors">{p.title}</p>
                                         </div>
                                         <div className="flex items-center gap-2 shrink-0">
                                             <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full capitalize", PROJ_BADGE[p.status] ?? "bg-zinc-100 text-zinc-500")}>
@@ -241,7 +241,7 @@ export default function ClientDetailPage() {
                         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100">
                             <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Invoices</h2>
                             <Link href={`/dashboard/invoices/new?clientId=${id}`}
-                                className="flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors">
+                                className="flex items-center gap-1 text-xs font-medium text-sky-500 hover:text-sky-600 transition-colors">
                                 <Plus size={13} /> New
                             </Link>
                         </div>
@@ -255,7 +255,7 @@ export default function ClientDetailPage() {
                                         <div className="flex items-center gap-3 min-w-0">
                                             <FileText size={14} className="text-zinc-400 shrink-0" />
                                             <div className="min-w-0">
-                                                <p className="text-sm font-semibold font-mono text-zinc-900 group-hover:text-orange-500 transition-colors">{inv.invoiceNumber}</p>
+                                                <p className="text-sm font-semibold font-mono text-zinc-900 group-hover:text-sky-500 transition-colors">{inv.invoiceNumber}</p>
                                                 <p className="text-xs text-zinc-400">{formatDate(inv.date)}</p>
                                             </div>
                                         </div>
@@ -369,7 +369,7 @@ export default function ClientDetailPage() {
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setShowEdit(false)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
                                         {isSaving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                                         {isSaving ? "Saving…" : "Save Changes"}
                                     </button>
@@ -451,7 +451,7 @@ export default function ClientDetailPage() {
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setEditContact(null)} className="px-5 py-2.5 bg-zinc-100 text-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-200 transition-colors">Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={isSaving} className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50">
                                         {isSaving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
                                         Save
                                     </button>

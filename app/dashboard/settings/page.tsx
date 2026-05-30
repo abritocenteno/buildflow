@@ -85,7 +85,7 @@ export default function SettingsPage() {
         setTimeout(() => setSaved(false), 3000);
     };
 
-    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
+    const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
     const labelCls = "block text-xs font-semibold text-zinc-600 mb-1.5";
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -102,7 +102,7 @@ export default function SettingsPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
                     <div className="flex items-center gap-2 mb-2">
-                        <Building2 size={18} className="text-orange-500" />
+                        <Building2 size={18} className="text-sky-500" />
                         <h2 className="font-semibold text-sm text-zinc-900">Company Information</h2>
                     </div>
                     <div>
@@ -177,7 +177,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="flex justify-end">
-                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                    <button type="submit" disabled={saving} className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-colors">
                         <Save size={16} />
                         {saving ? "Saving…" : "Save Settings"}
                     </button>
