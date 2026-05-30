@@ -207,3 +207,63 @@ export const sendIntakeNotificationEmail = action({
         return { success: true };
     },
 });
+
+export const sendSignoffRequestEmail = action({
+    args: {
+        clientName: v.string(),
+        clientEmail: v.string(),
+        projectTitle: v.string(),
+        projectAddress: v.optional(v.string()),
+        signoffUrl: v.string(),
+        note: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const resendApiKey = process.env.RESEND_API_KEY;
+        if (!resendApiKey) throw new Error("RESEND_API_KEY not set");
+
+        const resend = new Resend(resendApiKey);
+        const settings = await ctx.runQuery(api.settings.get);
+        const company = settings?.companyName ?? "Arcocen";
+        const senderName = settings?.emailSenderName || company;
+        const replyTo = settings?.contactEmail;
+
+        const noteBlock = args.note
+            ? `<p style="margin:0 0 24px;line-height:1.6;color:#52525b;">${args.note}</p>`
+            : "";
+
+        const addressLine = args.projectAddress
+            ? `<p style="margin:4px 0 0;font-size:13px;color:#71717a;">${args.projectAddress}</p>`
+            : "";
+
+        await resend.emails.send({
+            from: fromAddress(senderName),
+            to: [args.clientEmail],
+            ...(replyTo ? { replyTo } : {}),
+            subject: `Sign-off requested: ${args.projectTitle} — ${company}`,
+            text: `Dear ${args.clientName},\n\nWork has been completed on "${args.projectTitle}" and your sign-off is required.\n\n${args.note ? `${args.note}\n\n` : ""}Please review and sign off using the link below:\n${args.signoffUrl}\n\nThank you,\n${company}`,
+            html: `
+                <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#18181b;">
+                    <h2 style="font-size:22px;font-weight:900;margin:0 0 4px;">Sign-off requested</h2>
+                    <p style="color:#71717a;margin:0 0 32px;font-size:14px;">From ${company}</p>
+                    <p style="margin:0 0 16px;">Dear <strong>${args.clientName}</strong>,</p>
+                    <p style="margin:0 0 24px;line-height:1.6;">Work has been completed on the following project and your sign-off is required.</p>
+                    ${noteBlock}
+                    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:20px 24px;margin-bottom:28px;">
+                        <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0369a1;">Project</p>
+                        <p style="margin:0;font-weight:700;font-size:18px;color:#0c4a6e;">${args.projectTitle}</p>
+                        ${addressLine}
+                    </div>
+                    <a href="${args.signoffUrl}" style="display:block;background:#0ea5e9;color:#ffffff;text-align:center;padding:14px 24px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:28px;">
+                        Review &amp; Sign Off
+                    </a>
+                    <p style="margin:0 0 4px;font-size:12px;color:#a1a1aa;">Or copy this link into your browser:</p>
+                    <p style="margin:0;font-size:12px;color:#0ea5e9;word-break:break-all;">${args.signoffUrl}</p>
+                    <hr style="border:none;border-top:1px solid #e4e4e7;margin:32px 0;" />
+                    <p style="margin:0;font-size:12px;color:#a1a1aa;">© ${new Date().getFullYear()} ${company}</p>
+                </div>
+            `,
+        });
+
+        return { success: true };
+    },
+});

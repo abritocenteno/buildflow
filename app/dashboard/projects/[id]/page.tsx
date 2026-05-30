@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import {
     ArrowLeft, Edit2, Building2, MapPin, Calendar, DollarSign,
     Plus, Trash2, CheckCircle, Clock, FileText, Package, AlertTriangle,
+    ClipboardCheck, Send, Copy, Check,
 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -37,7 +38,7 @@ const CO_STATUS_COLORS: Record<string, string> = {
     rejected: "bg-red-100 text-red-700",
 };
 
-type Tab = "overview" | "change_orders" | "permits" | "invoices" | "time" | "materials" | "documents";
+type Tab = "overview" | "change_orders" | "permits" | "invoices" | "time" | "materials" | "documents" | "sign_offs";
 
 export default function ProjectDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -50,6 +51,9 @@ export default function ProjectDetailPage() {
     const updateCO = useMutation(api.changeOrders.update);
     const createPermit = useMutation(api.permits.create);
     const updatePermit = useMutation(api.permits.update);
+    const createSignoff = useMutation(api.signoffs.create);
+    const sendSignoffEmail = useAction(api.resend.sendSignoffRequestEmail);
+    const signoffs = useQuery(api.signoffs.listByProject, { projectId: id as Id<"projects"> });
 
     const [tab, setTab] = useState<Tab>("overview");
     const [showCOForm, setShowCOForm] = useState(false);
@@ -59,6 +63,11 @@ export default function ProjectDetailPage() {
     const [coForm, setCOForm] = useState({ description: "", amount: "", notes: "" });
     const [permitForm, setPermitForm] = useState({ type: "building", permitNumber: "", notes: "" });
     const [saving, setSaving] = useState(false);
+    const [showSignoffModal, setShowSignoffModal] = useState(false);
+    const [signoffForm, setSignoffForm] = useState({ clientEmail: "", clientName: "", note: "" });
+    const [signoffSending, setSignoffSending] = useState(false);
+    const [signoffLink, setSignoffLink] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
 
     if (project === undefined) {
         return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
@@ -101,6 +110,37 @@ export default function ProjectDetailPage() {
         setEditProgress(false);
     };
 
+    const handleSendSignoff = async () => {
+        if (!signoffForm.clientEmail.trim() || !signoffForm.clientName.trim()) return;
+        setSignoffSending(true);
+        try {
+            const { token } = await createSignoff({
+                projectId: id as Id<"projects">,
+                clientEmail: signoffForm.clientEmail.trim(),
+                clientName: signoffForm.clientName.trim(),
+            });
+            const url = `${window.location.origin}/signoff/${token}`;
+            setSignoffLink(url);
+            await sendSignoffEmail({
+                clientName: signoffForm.clientName.trim(),
+                clientEmail: signoffForm.clientEmail.trim(),
+                projectTitle: project.title,
+                projectAddress: [project.siteAddress, project.siteCity].filter(Boolean).join(", ") || undefined,
+                signoffUrl: url,
+                note: signoffForm.note.trim() || undefined,
+            });
+        } finally {
+            setSignoffSending(false);
+        }
+    };
+
+    const copyLink = () => {
+        if (!signoffLink) return;
+        navigator.clipboard.writeText(signoffLink);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     const inputCls = "w-full px-3 py-2 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all";
 
     const TABS: { key: Tab; label: string }[] = [
@@ -111,6 +151,7 @@ export default function ProjectDetailPage() {
         { key: "time", label: `Time (${project.timeEntries?.length ?? 0})` },
         { key: "materials", label: `Materials (${project.materials?.length ?? 0})` },
         { key: "documents", label: `Documents (${project.assets?.length ?? 0})` },
+        { key: "sign_offs", label: `Sign-offs (${signoffs?.length ?? 0})` },
     ];
 
     return (
@@ -132,6 +173,17 @@ export default function ProjectDetailPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => {
+                            setSignoffForm({ clientEmail: project.client?.email ?? "", clientName: project.client?.name ?? "", note: "" });
+                            setSignoffLink(null);
+                            setShowSignoffModal(true);
+                        }}
+                        className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-sky-500 hover:bg-sky-600 text-white rounded-xl transition-colors"
+                    >
+                        <ClipboardCheck size={14} />
+                        Send Sign-off
+                    </button>
                     <select
                         value={project.status}
                         onChange={(e) => updateStatus({ id: id as Id<"projects">, status: e.target.value })}
@@ -414,6 +466,137 @@ export default function ProjectDetailPage() {
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {tab === "sign_offs" && (
+                <div className="space-y-3">
+                    <div className="flex justify-end">
+                        <button
+                            onClick={() => {
+                                setSignoffForm({ clientEmail: project.client?.email ?? "", clientName: project.client?.name ?? "", note: "" });
+                                setSignoffLink(null);
+                                setShowSignoffModal(true);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-sky-500 hover:bg-sky-600 text-white rounded-xl transition-colors"
+                        >
+                            <Send size={14} />
+                            Send Sign-off Request
+                        </button>
+                    </div>
+                    {(signoffs ?? []).length === 0 && (
+                        <div className="text-center text-sm text-zinc-400 py-10">No sign-off requests sent yet</div>
+                    )}
+                    {(signoffs ?? []).map((s) => (
+                        <div key={s._id} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <p className="text-sm font-medium text-zinc-900">{s.clientName}</p>
+                                <p className="text-xs text-zinc-500">{s.clientEmail}</p>
+                                {s.completedAt && (
+                                    <p className="text-xs text-zinc-400">Signed by {s.supervisorName} · {new Date(s.completedAt).toLocaleDateString()}</p>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {s.status === "completed" ? (
+                                    <span className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                                        <CheckCircle size={12} /> Signed
+                                    </span>
+                                ) : (
+                                    <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Pending</span>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Send Sign-off Modal */}
+            {showSignoffModal && (
+                <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <h3 className="text-base font-bold text-zinc-900">Send sign-off request</h3>
+                                <p className="text-sm text-zinc-500 mt-0.5">The client will receive an email with a link to review and sign off on the completed work.</p>
+                            </div>
+
+                            {!signoffLink ? (
+                                <>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-xs font-medium text-zinc-500 mb-1">Client name</label>
+                                            <input
+                                                type="text"
+                                                value={signoffForm.clientName}
+                                                onChange={(e) => setSignoffForm(f => ({ ...f, clientName: e.target.value }))}
+                                                placeholder="e.g. John Smith"
+                                                className={inputCls}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-zinc-500 mb-1">Client email</label>
+                                            <input
+                                                type="email"
+                                                value={signoffForm.clientEmail}
+                                                onChange={(e) => setSignoffForm(f => ({ ...f, clientEmail: e.target.value }))}
+                                                placeholder="client@example.com"
+                                                className={inputCls}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-zinc-500 mb-1">Note <span className="font-normal text-zinc-400">(optional)</span></label>
+                                            <textarea
+                                                value={signoffForm.note}
+                                                onChange={(e) => setSignoffForm(f => ({ ...f, note: e.target.value }))}
+                                                rows={2}
+                                                placeholder="Any additional context for the client..."
+                                                className={`${inputCls} resize-none`}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 pt-1">
+                                        <button
+                                            onClick={() => setShowSignoffModal(false)}
+                                            className="flex-1 py-2.5 rounded-xl border border-zinc-200 text-sm font-medium text-zinc-600 hover:bg-zinc-50 transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSendSignoff}
+                                            disabled={signoffSending || !signoffForm.clientEmail.trim() || !signoffForm.clientName.trim()}
+                                            className="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 disabled:opacity-60 text-white text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
+                                        >
+                                            <Send size={14} />
+                                            {signoffSending ? "Sending…" : "Send"}
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                        <CheckCircle size={18} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-medium text-emerald-800">Email sent to {signoffForm.clientEmail}</p>
+                                            <p className="text-xs text-emerald-600 mt-0.5">You can also share the link directly:</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 bg-zinc-50 rounded-xl px-3 py-2.5 border border-zinc-200">
+                                        <p className="text-xs text-zinc-600 flex-1 truncate">{signoffLink}</p>
+                                        <button onClick={copyLink} className="flex items-center gap-1 text-xs font-medium text-sky-500 hover:text-sky-600 flex-shrink-0">
+                                            {copied ? <Check size={13} /> : <Copy size={13} />}
+                                            {copied ? "Copied" : "Copy"}
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => { setShowSignoffModal(false); setSignoffLink(null); setTab("sign_offs"); }}
+                                        className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
+                                    >
+                                        Done
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

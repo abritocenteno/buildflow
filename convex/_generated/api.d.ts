@@ -29,6 +29,7 @@ import type * as reports from "../reports.js";
 import type * as resend from "../resend.js";
 import type * as search from "../search.js";
 import type * as settings from "../settings.js";
+import type * as signoffs from "../signoffs.js";
 import type * as subcontractors from "../subcontractors.js";
 import type * as suppliers from "../suppliers.js";
 import type * as timeEntries from "../timeEntries.js";
@@ -62,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   resend: typeof resend;
   search: typeof search;
   settings: typeof settings;
+  signoffs: typeof signoffs;
   subcontractors: typeof subcontractors;
   suppliers: typeof suppliers;
   timeEntries: typeof timeEntries;

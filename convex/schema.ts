@@ -323,4 +323,25 @@ export default defineSchema({
     })
         .index("by_user", ["userId"])
         .index("by_user_key", ["userId", "key"]),
+
+    signoffs: defineTable({
+        projectId: v.id("projects"),
+        userId: v.string(),
+        token: v.string(),
+        status: v.string(), // "pending" | "completed"
+        clientEmail: v.string(),
+        clientName: v.string(),
+        sentAt: v.optional(v.number()),
+        // Filled on completion by client/supervisor
+        supervisorName: v.optional(v.string()),
+        workDescription: v.optional(v.string()),
+        checkIn: v.optional(v.string()),
+        checkOut: v.optional(v.string()),
+        signatureData: v.optional(v.string()), // base64 PNG
+        photoIds: v.optional(v.array(v.id("_storage"))),
+        completedAt: v.optional(v.number()),
+    })
+        .index("by_token", ["token"])
+        .index("by_project", ["projectId"])
+        .index("by_user", ["userId"]),
 });
