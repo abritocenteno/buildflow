@@ -64,15 +64,15 @@
     --color-blue-600: #2563eb;
     --color-blue-700: #1d4ed8;
 
-    /* Orange overrides */
-    --color-sky-50: #fff7ed;
-    --color-sky-100: #ffedd5;
-    --color-sky-200: #fed7aa;
-    --color-sky-300: #fdba74;
-    --color-sky-400: #fb923c;
-    --color-sky-500: #f97316;
-    --color-sky-600: #ea580c;
-    --color-sky-700: #c2410c;
+    /* Sky overrides */
+    --color-sky-50: #f0f9ff;
+    --color-sky-100: #e0f2fe;
+    --color-sky-200: #bae6fd;
+    --color-sky-300: #7dd3fc;
+    --color-sky-400: #38bdf8;
+    --color-sky-500: #0ea5e9;
+    --color-sky-600: #0284c7;
+    --color-sky-700: #0369a1;
 
     --color-black: #000000;
 }
