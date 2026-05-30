@@ -65,20 +65,6 @@ function SyncUser({ children }: { children: ReactNode }) {
     return <>{children}</>;
 }
 
-function DebugToken() {
-    const { getToken } = useAuth();
-    useEffect(() => {
-        getToken({ template: "convex" }).then((token) => {
-            if (!token) { console.warn("[Convex auth] getToken returned null — template may not exist or has no audience"); return; }
-            try {
-                const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-                console.log("[Convex auth] JWT payload:", payload);
-            } catch { console.log("[Convex auth] raw token:", token); }
-        }).catch((e) => console.error("[Convex auth] getToken error:", e));
-    }, [getToken]);
-    return null;
-}
-
 export default function ConvexClientProvider({
     children,
 }: {
@@ -93,7 +79,6 @@ export default function ConvexClientProvider({
     }
     return (
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-            <DebugToken />
             <SyncUser>{children}</SyncUser>
         </ConvexProviderWithClerk>
     );
