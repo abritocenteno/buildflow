@@ -133,6 +133,7 @@ export default function SettingsPage() {
                         <div>
                             <label className={labelCls}>Currency</label>
                             <select className={inputCls} value={form.currency} onChange={(e) => set("currency", e.target.value)}>
+                                <option value="AWG">AWG (ƒ)</option>
                                 <option value="EUR">EUR (€)</option>
                                 <option value="GBP">GBP (£)</option>
                                 <option value="USD">USD ($)</option>
