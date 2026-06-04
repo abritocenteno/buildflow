@@ -70,6 +70,7 @@ export default function ProjectDetailPage() {
     const [signoffLink, setSignoffLink] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
     const [selectedSignoffId, setSelectedSignoffId] = useState<Id<"signoffs"> | null>(null);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     if (project === undefined) {
         return <div className="flex items-center justify-center py-24"><div className="w-8 h-8 border-4 border-zinc-200 border-t-sky-500 rounded-full animate-spin" /></div>;
@@ -196,6 +197,25 @@ export default function ProjectDetailPage() {
                     <Link href={`/dashboard/projects/${id}/edit`} className="p-2 hover:bg-zinc-100 rounded-xl text-zinc-500 hover:text-zinc-900 transition-all">
                         <Edit2 size={18} />
                     </Link>
+                    {confirmingDelete ? (
+                        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                            <span className="text-xs text-red-700 font-medium">Delete project?</span>
+                            <button onClick={() => setConfirmingDelete(false)} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">Cancel</button>
+                            <button
+                                onClick={async () => {
+                                    await deleteProject({ id: id as Id<"projects"> });
+                                    router.push("/dashboard/projects");
+                                }}
+                                className="text-xs font-medium text-white bg-red-500 hover:bg-red-600 px-2.5 py-1 rounded-lg transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ) : (
+                        <button onClick={() => setConfirmingDelete(true)} className="p-2 hover:bg-red-50 rounded-xl text-zinc-400 hover:text-red-500 transition-all">
+                            <Trash2 size={18} />
+                        </button>
+                    )}
                 </div>
             </div>
 

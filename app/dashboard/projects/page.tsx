@@ -5,10 +5,12 @@ import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
-    Plus, LayoutGrid, List, Building2, MapPin, Calendar, DollarSign, ChevronRight,
+    Plus, LayoutGrid, List, MapPin, Calendar, DollarSign, ChevronRight, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Id } from "@/convex/_generated/dataModel";
 
 const STATUSES = [
     { key: "planning", label: "Planning", color: "bg-zinc-100 text-zinc-600 border-zinc-200" },
@@ -19,57 +21,87 @@ const STATUSES = [
     { key: "closed", label: "Closed", color: "bg-zinc-200 text-zinc-500 border-zinc-300" },
 ];
 
-function ProjectCard({ project }: { project: any }) {
+function ProjectCard({ project, onDelete }: { project: any; onDelete?: () => void }) {
+    const [confirming, setConfirming] = useState(false);
     const status = STATUSES.find((s) => s.key === project.status);
     return (
-        <Link
-            href={`/dashboard/projects/${project._id}`}
-            className="bg-white rounded-2xl border border-zinc-200 p-5 hover:border-sky-300 hover:shadow-md transition-all group block"
-        >
-            <div className="flex items-start justify-between gap-2 mb-3">
-                <h3 className="font-semibold text-zinc-900 text-sm group-hover:text-sky-600 transition-colors leading-snug">{project.title}</h3>
-                <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full border flex-shrink-0", status?.color ?? "bg-zinc-100 text-zinc-500 border-zinc-200")}>
-                    {status?.label ?? project.status}
-                </span>
-            </div>
-            <p className="text-xs text-zinc-500 mb-3">{project.client?.name}</p>
-            {project.siteAddress && (
-                <div className="flex items-center gap-1.5 text-xs text-zinc-400 mb-3">
-                    <MapPin size={12} />
-                    <span className="truncate">{project.siteAddress}</span>
+        <div className="relative group">
+            <Link
+                href={`/dashboard/projects/${project._id}`}
+                className="bg-white rounded-2xl border border-zinc-200 p-5 hover:border-sky-300 hover:shadow-md transition-all group block"
+            >
+                <div className="flex items-start justify-between gap-2 mb-3">
+                    <h3 className="font-semibold text-zinc-900 text-sm group-hover:text-sky-600 transition-colors leading-snug">{project.title}</h3>
+                    <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full border flex-shrink-0", status?.color ?? "bg-zinc-100 text-zinc-500 border-zinc-200")}>
+                        {status?.label ?? project.status}
+                    </span>
                 </div>
-            )}
-            {project.progress !== undefined && (
-                <div className="mb-3">
-                    <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-zinc-400">Progress</span>
-                        <span className="text-xs font-medium text-zinc-600">{project.progress}%</span>
+                <p className="text-xs text-zinc-500 mb-3">{project.client?.name}</p>
+                {project.siteAddress && (
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-400 mb-3">
+                        <MapPin size={12} />
+                        <span className="truncate">{project.siteAddress}</span>
                     </div>
-                    <div className="h-1.5 bg-zinc-100 rounded-full">
-                        <div
-                            className="h-1.5 bg-sky-500 rounded-full transition-all"
-                            style={{ width: `${project.progress}%` }}
-                        />
-                    </div>
-                </div>
-            )}
-            <div className="flex items-center justify-between text-xs text-zinc-400">
-                {project.estimatedBudget ? (
-                    <span className="flex items-center gap-1"><DollarSign size={11} />{formatCurrency(project.estimatedBudget)}</span>
-                ) : <span />}
-                {project.endDate && (
-                    <span className="flex items-center gap-1"><Calendar size={11} />{formatDate(project.endDate)}</span>
                 )}
-            </div>
-        </Link>
+                {project.progress !== undefined && (
+                    <div className="mb-3">
+                        <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-zinc-400">Progress</span>
+                            <span className="text-xs font-medium text-zinc-600">{project.progress}%</span>
+                        </div>
+                        <div className="h-1.5 bg-zinc-100 rounded-full">
+                            <div
+                                className="h-1.5 bg-sky-500 rounded-full transition-all"
+                                style={{ width: `${project.progress}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+                <div className="flex items-center justify-between text-xs text-zinc-400">
+                    {project.estimatedBudget ? (
+                        <span className="flex items-center gap-1"><DollarSign size={11} />{formatCurrency(project.estimatedBudget)}</span>
+                    ) : <span />}
+                    {project.endDate && (
+                        <span className="flex items-center gap-1"><Calendar size={11} />{formatDate(project.endDate)}</span>
+                    )}
+                </div>
+            </Link>
+            {onDelete && (
+                confirming ? (
+                    <div className="absolute inset-0 bg-white/95 rounded-2xl border border-red-200 flex flex-col items-center justify-center gap-2 p-4">
+                        <p className="text-sm font-semibold text-zinc-800">Delete project?</p>
+                        <p className="text-xs text-zinc-500 text-center">This cannot be undone.</p>
+                        <div className="flex gap-2 mt-1">
+                            <button onClick={() => setConfirming(false)} className="px-3 py-1.5 text-xs rounded-lg bg-zinc-100 text-zinc-600 hover:bg-zinc-200 transition-colors">Cancel</button>
+                            <button onClick={onDelete} className="px-3 py-1.5 text-xs rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">Delete</button>
+                        </div>
+                    </div>
+                ) : (
+                    <button
+                        onClick={(e) => { e.preventDefault(); setConfirming(true); }}
+                        className="absolute bottom-4 right-4 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-zinc-300 hover:bg-red-50 hover:text-red-500 transition-all"
+                    >
+                        <Trash2 size={14} />
+                    </button>
+                )
+            )}
+        </div>
     );
 }
 
 export default function ProjectsPage() {
     const projects = useQuery(api.projects.list) ?? [];
     const updateStatus = useMutation(api.projects.updateStatus);
+    const deleteProject = useMutation(api.projects.remove);
+    const router = useRouter();
     const [view, setView] = useState<"kanban" | "list">("kanban");
     const [filter, setFilter] = useState("all");
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+    async function handleDelete(id: string) {
+        await deleteProject({ id: id as Id<"projects"> });
+        setConfirmDeleteId(null);
+    }
 
     const filtered = filter === "all" ? projects : projects.filter((p: any) => p.status === filter);
 
@@ -144,7 +176,7 @@ export default function ProjectsPage() {
                                 </div>
                                 <div className="space-y-3">
                                     {cols.map((project: any) => (
-                                        <ProjectCard key={project._id} project={project} />
+                                        <ProjectCard key={project._id} project={project} onDelete={() => handleDelete(project._id)} />
                                     ))}
                                     {cols.length === 0 && (
                                         <div className="border-2 border-dashed border-zinc-200 rounded-2xl p-6 text-center text-xs text-zinc-400">
@@ -181,7 +213,7 @@ export default function ProjectsPage() {
                             {filtered.map((project: any) => {
                                 const status = STATUSES.find((s) => s.key === project.status);
                                 return (
-                                    <tr key={project._id} className="hover:bg-zinc-50 transition-colors">
+                                    <tr key={project._id} className="hover:bg-zinc-50 transition-colors group">
                                         <td className="px-6 py-4">
                                             <Link href={`/dashboard/projects/${project._id}`} className="font-medium text-zinc-900 hover:text-sky-600">
                                                 {project.title}
@@ -201,9 +233,26 @@ export default function ProjectsPage() {
                                             {project.endDate ? formatDate(project.endDate) : "—"}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Link href={`/dashboard/projects/${project._id}`} className="text-zinc-400 hover:text-sky-500 transition-colors">
-                                                <ChevronRight size={18} />
-                                            </Link>
+                                            <div className="flex items-center justify-end gap-2">
+                                                {confirmDeleteId === project._id ? (
+                                                    <>
+                                                        <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">Cancel</button>
+                                                        <button onClick={() => handleDelete(project._id)} className="text-xs font-medium text-white bg-red-500 hover:bg-red-600 px-2.5 py-1 rounded-lg transition-colors">Delete</button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            onClick={() => setConfirmDeleteId(project._id)}
+                                                            className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-zinc-300 hover:bg-red-50 hover:text-red-500 transition-all"
+                                                        >
+                                                            <Trash2 size={15} />
+                                                        </button>
+                                                        <Link href={`/dashboard/projects/${project._id}`} className="text-zinc-400 hover:text-sky-500 transition-colors">
+                                                            <ChevronRight size={18} />
+                                                        </Link>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 );
