@@ -70,11 +70,13 @@ export const create = mutation({
         retainageAmount: v.optional(v.number()),
         taxRate: v.optional(v.number()),
         orderIds: v.optional(v.array(v.id("orders"))),
+        invoiceNumber: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const userId = await getUserId(ctx);
-        const invoiceNumber = await nextInvoiceNumber(ctx, userId);
-        return await ctx.db.insert("invoices", { ...args, userId, invoiceNumber, status: "pending" });
+        const { invoiceNumber: customNumber, ...rest } = args;
+        const invoiceNumber = customNumber?.trim() || await nextInvoiceNumber(ctx, userId);
+        return await ctx.db.insert("invoices", { ...rest, userId, invoiceNumber, status: "pending" });
     },
 });
 

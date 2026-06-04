@@ -18,6 +18,7 @@ import {
     ChevronDown,
     FolderKanban,
     Percent,
+    Hash,
 } from "lucide-react";
 import { cn, formatCurrency, getCurrencySymbol } from "@/lib/utils";
 
@@ -39,6 +40,7 @@ function CreateInvoiceForm() {
     const [formData, setFormData] = useState({
         clientId: (initialClientId || "") as Id<"clients"> | "",
         projectId: (initialProjectId || "") as Id<"projects"> | "",
+        invoiceNumber: "",
         invoiceType: "progress" as string,
         date: new Date().toISOString().split("T")[0],
         dueDate: "",
@@ -109,6 +111,7 @@ function CreateInvoiceForm() {
                 taxRate: formData.taxRate,
                 retainagePercent: formData.retainagePercent || undefined,
                 retainageAmount: formData.retainagePercent ? retainageAmount : undefined,
+                invoiceNumber: formData.invoiceNumber || undefined,
                 items: formData.items,
                 credits: formData.credits.length ? formData.credits : undefined,
             });
@@ -145,6 +148,21 @@ function CreateInvoiceForm() {
                 {/* Header Info */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-5">
                     <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Invoice Details</h2>
+
+                    {/* Invoice Number */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-zinc-500">Invoice Number</label>
+                        <div className="relative">
+                            <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                            <input
+                                type="text"
+                                placeholder="e.g. INV-0042 — leave blank to auto-generate"
+                                value={formData.invoiceNumber}
+                                onChange={(e) => setFormData((p) => ({ ...p, invoiceNumber: e.target.value }))}
+                                className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300"
+                            />
+                        </div>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Client */}
