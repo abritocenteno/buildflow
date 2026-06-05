@@ -19,6 +19,7 @@ import {
     RotateCcw,
     FolderKanban,
     Timer,
+    Trash2,
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -100,6 +101,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
 
     const markPaid = useMutation(api.invoices.markPaid);
     const updateInvoice = useMutation(api.invoices.update);
+    const deleteInvoice = useMutation(api.invoices.remove);
     const importTimeEntries = useMutation(api.timeEntries.importToInvoice);
     const sendEmailAction = useAction(api.resend.sendInvoiceEmail);
     const sendReminderAction = useAction(api.resend.sendOverdueReminderEmail);
@@ -113,6 +115,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     const [payMethod, setPayMethod] = useState("Bank Transfer");
     const [isMarkingPaid, setIsMarkingPaid] = useState(false);
     const [isImportingTime, setIsImportingTime] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     const handleMarkPaid = async () => {
         if (!invoice) return;
@@ -261,7 +264,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 self-start">
                     {invoice.status !== "paid" && unbilledEntries && unbilledEntries.length > 0 && (
                         <button onClick={handleImportTime} disabled={isImportingTime} className="flex items-center gap-1.5 px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl text-sm font-medium hover:bg-blue-100 transition-all disabled:opacity-50">
                             {isImportingTime ? <Loader2 size={15} className="animate-spin" /> : <Timer size={15} />}
@@ -348,6 +351,25 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                                 </>
                             )}
                         </div>
+                    )}
+                    {confirmingDelete ? (
+                        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                            <span className="text-xs text-red-700 font-medium">Delete invoice?</span>
+                            <button onClick={() => setConfirmingDelete(false)} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">Cancel</button>
+                            <button
+                                onClick={async () => {
+                                    await deleteInvoice({ id });
+                                    router.push("/dashboard/invoices");
+                                }}
+                                className="text-xs font-medium text-white bg-red-500 hover:bg-red-600 px-2.5 py-1 rounded-lg transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ) : (
+                        <button onClick={() => setConfirmingDelete(true)} className="p-2 bg-white border border-zinc-200 rounded-xl text-zinc-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all">
+                            <Trash2 size={15} />
+                        </button>
                     )}
                 </div>
             </header>

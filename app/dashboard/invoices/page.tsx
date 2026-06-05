@@ -1,11 +1,12 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
-import { Plus, ChevronRight, FileText } from "lucide-react";
+import { Plus, ChevronRight, FileText, Trash2 } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 const STATUS_COLORS: Record<string, string> = {
     pending: "bg-amber-100 text-amber-700",
@@ -15,7 +16,14 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function InvoicesPage() {
     const invoices = useQuery(api.invoices.list) ?? [];
+    const deleteInvoice = useMutation(api.invoices.remove);
     const [filter, setFilter] = useState("all");
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+    async function handleDelete(id: string) {
+        await deleteInvoice({ id: id as Id<"invoices"> });
+        setConfirmDeleteId(null);
+    }
 
     const filtered = filter === "all" ? invoices : invoices.filter((i: any) => i.status === filter);
 
@@ -94,7 +102,7 @@ export default function InvoicesPage() {
                             </tr>
                         )}
                         {filtered.map((inv: any) => (
-                            <tr key={inv._id} className="hover:bg-zinc-50 transition-colors">
+                            <tr key={inv._id} className="hover:bg-zinc-50 transition-colors group">
                                 <td className="px-6 py-4 font-mono font-semibold text-zinc-900">{inv.invoiceNumber}</td>
                                 <td className="px-6 py-4 text-zinc-600 hidden sm:table-cell">{inv.client?.name}</td>
                                 <td className="px-6 py-4 text-zinc-500 text-xs hidden md:table-cell">{inv.project?.title ?? "—"}</td>
@@ -107,9 +115,26 @@ export default function InvoicesPage() {
                                 </td>
                                 <td className="px-6 py-4 text-right font-semibold text-zinc-900">{formatCurrency(inv.amount)}</td>
                                 <td className="px-6 py-4">
-                                    <Link href={`/dashboard/invoices/${inv._id}`} className="text-zinc-400 hover:text-sky-500">
-                                        <ChevronRight size={18} />
-                                    </Link>
+                                    <div className="flex items-center justify-end gap-2">
+                                        {confirmDeleteId === inv._id ? (
+                                            <>
+                                                <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">Cancel</button>
+                                                <button onClick={() => handleDelete(inv._id)} className="text-xs font-medium text-white bg-red-500 hover:bg-red-600 px-2.5 py-1 rounded-lg transition-colors">Delete</button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => setConfirmDeleteId(inv._id)}
+                                                    className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-zinc-300 hover:bg-red-50 hover:text-red-500 transition-all"
+                                                >
+                                                    <Trash2 size={15} />
+                                                </button>
+                                                <Link href={`/dashboard/invoices/${inv._id}`} className="text-zinc-400 hover:text-sky-500">
+                                                    <ChevronRight size={18} />
+                                                </Link>
+                                            </>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
