@@ -1,5 +1,6 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 async function getUserId(ctx: any) {
     const identity = await ctx.auth.getUserIdentity();
@@ -171,5 +172,55 @@ export const remove = mutation({
             await ctx.db.patch(inv._id, { purchaseOrderId: undefined });
         }
         await ctx.db.delete(id);
+    },
+});
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+export const parsePoPdf = action({
+    args: { storageId: v.id("_storage") },
+    handler: async (ctx, { storageId }) => {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error("GEMINI_API_KEY not set");
+
+        const fileBlob = await ctx.storage.get(storageId);
+        if (!fileBlob) throw new Error("File not found in storage");
+        const buffer = await fileBlob.arrayBuffer();
+        const base64Data = arrayBufferToBase64(buffer);
+
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+        const prompt = `You are parsing a Purchase Order (PO) document. Extract the following fields and return ONLY valid JSON with no markdown formatting:
+{
+  "poNumber": "the PO number or order number (e.g. 50019838)",
+  "amount": 0.00,
+  "receivedAt": "YYYY-MM-DD",
+  "expiresAt": "YYYY-MM-DD or null",
+  "description": "brief summary of the work or items ordered (combine line item descriptions if needed, max 200 chars)",
+  "clientName": "name of the company that issued the PO"
+}
+
+Rules:
+- amount: sum of all line item amounts, as a number (no currency symbols)
+- receivedAt: the PO issue/order date
+- expiresAt: the delivery date, required-by date, or expiry date if present, otherwise null
+- If a field cannot be found, use null
+- Return ONLY the JSON object, no explanation`;
+
+        const result = await model.generateContent([
+            prompt,
+            { inlineData: { data: base64Data, mimeType: "application/pdf" } },
+        ]);
+
+        const raw = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+        return JSON.parse(raw);
     },
 });

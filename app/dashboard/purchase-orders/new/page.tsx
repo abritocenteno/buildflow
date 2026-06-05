@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useState, useRef } from "react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { ArrowLeft, Save, Hash, Receipt } from "lucide-react";
+import { ArrowLeft, Save, Hash, Receipt, Upload, Loader2, FileText, X } from "lucide-react";
 
 const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all bg-zinc-50";
 const labelCls = "block text-xs font-semibold text-zinc-600 mb-1.5";
@@ -16,7 +16,10 @@ export default function NewPurchaseOrderPage() {
     const clients = useQuery(api.clients.list) ?? [];
     const allProjects = useQuery(api.projects.list) ?? [];
     const createPo = useMutation(api.purchaseOrders.create);
+    const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+    const parsePoPdf = useAction(api.purchaseOrders.parsePoPdf);
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [form, setForm] = useState({
         clientId: "",
         projectId: "",
@@ -29,11 +32,57 @@ export default function NewPurchaseOrderPage() {
         internalNotes: "",
     });
     const [saving, setSaving] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState<{ name: string; storageId: Id<"_storage"> } | null>(null);
+    const [parsing, setParsing] = useState(false);
+    const [parseError, setParseError] = useState<string | null>(null);
 
     const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-    // Filter projects by selected client
     const clientProjects = allProjects.filter((p: any) => p.clientId === form.clientId);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setParseError(null);
+        setParsing(true);
+        try {
+            // Upload to Convex storage
+            const uploadUrl = await generateUploadUrl();
+            const res = await fetch(uploadUrl, {
+                method: "POST",
+                headers: { "Content-Type": file.type },
+                body: file,
+            });
+            if (!res.ok) throw new Error("Upload failed");
+            const { storageId } = await res.json();
+            setUploadedFile({ name: file.name, storageId });
+
+            // Extract PO details via Gemini
+            const extracted = await parsePoPdf({ storageId });
+
+            // Auto-fill form with extracted values (don't overwrite if already filled)
+            setForm((f) => ({
+                ...f,
+                poNumber: f.poNumber || extracted.poNumber || "",
+                amount: f.amount || (extracted.amount ? String(extracted.amount) : ""),
+                receivedAt: extracted.receivedAt || f.receivedAt,
+                expiresAt: extracted.expiresAt || f.expiresAt || "",
+                description: f.description || extracted.description || "",
+            }));
+        } catch (err: any) {
+            setParseError("Couldn't extract details — please fill in manually.");
+            console.error(err);
+        } finally {
+            setParsing(false);
+        }
+    };
+
+    const clearFile = () => {
+        setUploadedFile(null);
+        setParseError(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,6 +97,8 @@ export default function NewPurchaseOrderPage() {
                 amount: parseFloat(form.amount),
                 receivedAt: new Date(form.receivedAt).getTime(),
                 expiresAt: form.expiresAt ? new Date(form.expiresAt).getTime() : undefined,
+                fileStorageId: uploadedFile?.storageId,
+                fileName: uploadedFile?.name,
                 notes: form.notes || undefined,
                 internalNotes: form.internalNotes || undefined,
             });
@@ -70,6 +121,54 @@ export default function NewPurchaseOrderPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                {/* PDF Upload */}
+                <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-3">
+                    <div>
+                        <h2 className="font-semibold text-zinc-900 text-sm flex items-center gap-2">
+                            <Upload size={15} className="text-sky-500" /> Upload PO Document
+                        </h2>
+                        <p className="text-xs text-zinc-400 mt-0.5">Upload a PDF and we'll auto-fill the details below.</p>
+                    </div>
+
+                    {!uploadedFile ? (
+                        <label className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-6 cursor-pointer transition-colors ${parsing ? "border-sky-200 bg-sky-50" : "border-zinc-200 hover:border-sky-300 hover:bg-sky-50/50"}`}>
+                            {parsing ? (
+                                <>
+                                    <Loader2 size={22} className="text-sky-500 animate-spin" />
+                                    <span className="text-sm text-sky-600 font-medium">Reading PO…</span>
+                                    <span className="text-xs text-zinc-400">Extracting details with AI</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FileText size={22} className="text-zinc-400" />
+                                    <span className="text-sm text-zinc-600 font-medium">Click to upload PDF</span>
+                                    <span className="text-xs text-zinc-400">or drag and drop</span>
+                                </>
+                            )}
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="application/pdf"
+                                className="hidden"
+                                onChange={handleFileChange}
+                                disabled={parsing}
+                            />
+                        </label>
+                    ) : (
+                        <div className="flex items-center gap-3 bg-sky-50 border border-sky-100 rounded-xl px-4 py-3">
+                            <FileText size={18} className="text-sky-500 shrink-0" />
+                            <span className="text-sm text-zinc-700 font-medium flex-1 truncate">{uploadedFile.name}</span>
+                            <button type="button" onClick={clearFile} className="text-zinc-400 hover:text-zinc-700 transition-colors">
+                                <X size={16} />
+                            </button>
+                        </div>
+                    )}
+
+                    {parseError && (
+                        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{parseError}</p>
+                    )}
+                </div>
+
                 {/* PO Details */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
                     <h2 className="font-semibold text-zinc-900 text-sm flex items-center gap-2">
@@ -123,7 +222,7 @@ export default function NewPurchaseOrderPage() {
                             <input type="date" required className={inputCls} value={form.receivedAt} onChange={(e) => set("receivedAt", e.target.value)} />
                         </div>
                         <div>
-                            <label className={labelCls}>Expiry Date</label>
+                            <label className={labelCls}>Expiry / Delivery Date</label>
                             <input type="date" className={inputCls} value={form.expiresAt} onChange={(e) => set("expiresAt", e.target.value)} />
                         </div>
                     </div>
@@ -179,7 +278,7 @@ export default function NewPurchaseOrderPage() {
                     </Link>
                     <button
                         type="submit"
-                        disabled={saving}
+                        disabled={saving || parsing}
                         className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors"
                     >
                         <Save size={16} />
