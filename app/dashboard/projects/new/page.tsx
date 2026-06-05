@@ -24,6 +24,7 @@ export default function NewProjectPage() {
         startDate: "",
         endDate: "",
         estimatedBudget: "",
+        purchaseOrderNumber: "",
         internalNotes: "",
     });
     const [saving, setSaving] = useState(false);
@@ -46,6 +47,7 @@ export default function NewProjectPage() {
                 startDate: form.startDate ? new Date(form.startDate).getTime() : undefined,
                 endDate: form.endDate ? new Date(form.endDate).getTime() : undefined,
                 estimatedBudget: form.estimatedBudget ? parseFloat(form.estimatedBudget) : undefined,
+                purchaseOrderNumber: form.purchaseOrderNumber || undefined,
                 internalNotes: form.internalNotes || undefined,
             });
             router.push(`/dashboard/projects/${id}`);
@@ -89,6 +91,11 @@ export default function NewProjectPage() {
                     <div>
                         <label className={labelCls}>Description</label>
                         <textarea className={inputCls} rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Scope of work, project overview…" />
+                    </div>
+
+                    <div>
+                        <label className={labelCls}>Purchase Order Number</label>
+                        <input className={inputCls} value={form.purchaseOrderNumber} onChange={(e) => set("purchaseOrderNumber", e.target.value)} placeholder="e.g. PO-2024-001 (optional)" />
                     </div>
 
                     <div>

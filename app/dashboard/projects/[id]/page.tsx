@@ -173,6 +173,9 @@ export default function ProjectDetailPage() {
                             </span>
                         </div>
                         <p className="text-sm text-zinc-500 mt-0.5">{project.client?.name}</p>
+                        {(project as any).purchaseOrderNumber && (
+                            <p className="text-xs text-zinc-400 mt-0.5">PO: <span className="font-mono font-medium text-zinc-600">{(project as any).purchaseOrderNumber}</span></p>
+                        )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

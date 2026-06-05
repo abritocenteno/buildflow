@@ -41,6 +41,7 @@ function CreateInvoiceForm() {
         clientId: (initialClientId || "") as Id<"clients"> | "",
         projectId: (initialProjectId || "") as Id<"projects"> | "",
         invoiceNumber: "",
+        purchaseOrderNumber: "",
         invoiceType: "progress" as string,
         date: new Date().toISOString().split("T")[0],
         dueDate: "",
@@ -112,6 +113,7 @@ function CreateInvoiceForm() {
                 retainagePercent: formData.retainagePercent || undefined,
                 retainageAmount: formData.retainagePercent ? retainageAmount : undefined,
                 invoiceNumber: formData.invoiceNumber || undefined,
+                purchaseOrderNumber: formData.purchaseOrderNumber || undefined,
                 items: formData.items,
                 credits: formData.credits.length ? formData.credits : undefined,
             });
@@ -164,6 +166,21 @@ function CreateInvoiceForm() {
                         </div>
                     </div>
 
+                    {/* PO Number */}
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-zinc-500">Purchase Order Number</label>
+                        <div className="relative">
+                            <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                            <input
+                                type="text"
+                                placeholder="e.g. PO-2024-001 — auto-filled from project"
+                                value={formData.purchaseOrderNumber}
+                                onChange={(e) => setFormData((p) => ({ ...p, purchaseOrderNumber: e.target.value }))}
+                                className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300"
+                            />
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Client */}
                         <div className="space-y-1.5">
@@ -190,7 +207,14 @@ function CreateInvoiceForm() {
                                 <FolderKanban size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                                 <select
                                     value={formData.projectId}
-                                    onChange={(e) => setFormData((p) => ({ ...p, projectId: e.target.value as Id<"projects"> }))}
+                                    onChange={(e) => {
+                                        const proj = filteredProjects.find((p: any) => p._id === e.target.value);
+                                        setFormData((p) => ({
+                                            ...p,
+                                            projectId: e.target.value as Id<"projects">,
+                                            purchaseOrderNumber: (proj as any)?.purchaseOrderNumber ?? p.purchaseOrderNumber,
+                                        }));
+                                    }}
                                     className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 appearance-none"
                                 >
                                     <option value="">No project</option>

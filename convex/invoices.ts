@@ -71,6 +71,7 @@ export const create = mutation({
         taxRate: v.optional(v.number()),
         orderIds: v.optional(v.array(v.id("orders"))),
         invoiceNumber: v.optional(v.string()),
+        purchaseOrderNumber: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const userId = await getUserId(ctx);
@@ -107,6 +108,7 @@ export const update = mutation({
         taxRate: v.optional(v.number()),
         paidAt: v.optional(v.number()),
         invoiceStorageId: v.optional(v.id("_storage")),
+        purchaseOrderNumber: v.optional(v.string()),
     },
     handler: async (ctx, { id, ...fields }) => {
         await ctx.db.patch(id, fields);

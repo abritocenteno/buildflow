@@ -33,7 +33,7 @@ export default function EditProjectPage() {
         title: "", description: "", status: "planning",
         siteAddress: "", siteCity: "", sitePostcode: "",
         startDate: "", endDate: "",
-        estimatedBudget: "", internalNotes: "",
+        estimatedBudget: "", purchaseOrderNumber: "", internalNotes: "",
     });
     const [selectedSubIds, setSelectedSubIds] = useState<string[]>([]);
 
@@ -50,6 +50,7 @@ export default function EditProjectPage() {
                 startDate: p.startDate ? new Date(p.startDate).toISOString().split("T")[0] : "",
                 endDate: p.endDate ? new Date(p.endDate).toISOString().split("T")[0] : "",
                 estimatedBudget: p.estimatedBudget ? String(p.estimatedBudget) : "",
+                purchaseOrderNumber: p.purchaseOrderNumber ?? "",
                 internalNotes: p.internalNotes ?? "",
             });
             setSelectedSubIds(p.subcontractorIds ?? []);
@@ -80,6 +81,7 @@ export default function EditProjectPage() {
                 startDate: form.startDate ? new Date(form.startDate).getTime() : undefined,
                 endDate: form.endDate ? new Date(form.endDate).getTime() : undefined,
                 estimatedBudget: form.estimatedBudget ? parseFloat(form.estimatedBudget) : undefined,
+                purchaseOrderNumber: form.purchaseOrderNumber || undefined,
                 internalNotes: form.internalNotes || undefined,
                 subcontractorIds: selectedSubIds as Id<"subcontractors">[],
             });
@@ -142,6 +144,10 @@ export default function EditProjectPage() {
                             <label className="text-xs font-medium text-zinc-500">End Date</label>
                             <input type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className={inputCls} />
                         </div>
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-zinc-500">Purchase Order Number</label>
+                        <input value={form.purchaseOrderNumber} onChange={(e) => set("purchaseOrderNumber", e.target.value)} placeholder="e.g. PO-2024-001 (optional)" className={inputCls} />
                     </div>
                 </div>
 

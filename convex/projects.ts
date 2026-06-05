@@ -60,6 +60,7 @@ export const create = mutation({
         endDate: v.optional(v.number()),
         estimatedBudget: v.optional(v.number()),
         quoteId: v.optional(v.id("quotes")),
+        purchaseOrderNumber: v.optional(v.string()),
         internalNotes: v.optional(v.string()),
         fromIntake: v.optional(v.boolean()),
     },
@@ -85,6 +86,7 @@ export const update = mutation({
         progress: v.optional(v.number()),
         subcontractorIds: v.optional(v.array(v.id("subcontractors"))),
         photoIds: v.optional(v.array(v.id("_storage"))),
+        purchaseOrderNumber: v.optional(v.string()),
         internalNotes: v.optional(v.string()),
     },
     handler: async (ctx, { id, ...fields }) => {

@@ -89,6 +89,7 @@ export default defineSchema({
         progress: v.optional(v.number()), // 0-100
         // Links
         quoteId: v.optional(v.id("quotes")),
+        purchaseOrderNumber: v.optional(v.string()),
         // Subcontractors assigned
         subcontractorIds: v.optional(v.array(v.id("subcontractors"))),
         // Photos
@@ -159,6 +160,7 @@ export default defineSchema({
         orderIds: v.optional(v.array(v.id("orders"))),
         taxRate: v.optional(v.number()),
         paidAt: v.optional(v.number()),
+        purchaseOrderNumber: v.optional(v.string()),
         userId: v.string(),
     })
         .index("by_client", ["clientId"])

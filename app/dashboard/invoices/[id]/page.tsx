@@ -461,6 +461,12 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                                         <p className="font-bold">{formatDate((invoice as any).dueDate)}</p>
                                     </div>
                                 )}
+                                {(invoice as any).purchaseOrderNumber && (
+                                    <div>
+                                        <p className="text-xs text-zinc-400 mb-0.5">PO Number</p>
+                                        <p className="font-bold font-mono">{(invoice as any).purchaseOrderNumber}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="space-y-3 relative">
