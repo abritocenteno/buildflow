@@ -42,6 +42,7 @@ function CreateInvoiceForm() {
         projectId: (initialProjectId || "") as Id<"projects"> | "",
         invoiceNumber: "",
         purchaseOrderNumber: "",
+        purchaseOrderId: "" as Id<"purchaseOrders"> | "",
         invoiceType: "progress" as string,
         date: new Date().toISOString().split("T")[0],
         dueDate: "",
@@ -114,6 +115,7 @@ function CreateInvoiceForm() {
                 retainageAmount: formData.retainagePercent ? retainageAmount : undefined,
                 invoiceNumber: formData.invoiceNumber || undefined,
                 purchaseOrderNumber: formData.purchaseOrderNumber || undefined,
+                purchaseOrderId: formData.purchaseOrderId ? (formData.purchaseOrderId as Id<"purchaseOrders">) : undefined,
                 items: formData.items,
                 credits: formData.credits.length ? formData.credits : undefined,
             });
@@ -213,6 +215,7 @@ function CreateInvoiceForm() {
                                             ...p,
                                             projectId: e.target.value as Id<"projects">,
                                             purchaseOrderNumber: (proj as any)?.purchaseOrderNumber ?? p.purchaseOrderNumber,
+                                            purchaseOrderId: (proj as any)?.purchaseOrderId ?? p.purchaseOrderId,
                                         }));
                                     }}
                                     className="w-full pl-9 pr-8 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-300 appearance-none"

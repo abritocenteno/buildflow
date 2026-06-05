@@ -21,6 +21,7 @@ import {
     FolderKanban,
     HardHat,
     ClipboardList,
+    Receipt,
 } from "lucide-react";
 import Image from "next/image";
 import { GlobalSearch } from "@/components/GlobalSearch";
@@ -83,6 +84,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
         { label: "Projects", icon: FolderKanban, href: "/dashboard/projects" },
         { label: "Quotes", icon: ClipboardList, href: "/dashboard/quotes" },
+        { label: "Purchase Orders", icon: Receipt, href: "/dashboard/purchase-orders" },
         { label: "Clients", icon: Users, href: "/dashboard/clients" },
         { label: "Subcontractors", icon: HardHat, href: "/dashboard/subcontractors" },
         { label: "Suppliers", icon: Truck, href: "/dashboard/suppliers" },

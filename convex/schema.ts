@@ -69,6 +69,25 @@ export default defineSchema({
         userId: v.string(),
     }).index("by_user", ["userId"]),
 
+    purchaseOrders: defineTable({
+        userId: v.string(),
+        clientId: v.id("clients"),
+        projectId: v.optional(v.id("projects")),
+        poNumber: v.string(),
+        description: v.optional(v.string()),
+        amount: v.number(),
+        status: v.string(), // 'received' | 'active' | 'fully_billed' | 'closed'
+        receivedAt: v.number(),
+        expiresAt: v.optional(v.number()),
+        fileStorageId: v.optional(v.id("_storage")),
+        fileName: v.optional(v.string()),
+        notes: v.optional(v.string()),
+        internalNotes: v.optional(v.string()),
+    })
+        .index("by_user", ["userId"])
+        .index("by_client", ["clientId"])
+        .index("by_project", ["projectId"]),
+
     projects: defineTable({
         userId: v.string(),
         clientId: v.id("clients"),
@@ -90,6 +109,7 @@ export default defineSchema({
         // Links
         quoteId: v.optional(v.id("quotes")),
         purchaseOrderNumber: v.optional(v.string()),
+        purchaseOrderId: v.optional(v.id("purchaseOrders")),
         // Subcontractors assigned
         subcontractorIds: v.optional(v.array(v.id("subcontractors"))),
         // Photos
@@ -161,11 +181,13 @@ export default defineSchema({
         taxRate: v.optional(v.number()),
         paidAt: v.optional(v.number()),
         purchaseOrderNumber: v.optional(v.string()),
+        purchaseOrderId: v.optional(v.id("purchaseOrders")),
         userId: v.string(),
     })
         .index("by_client", ["clientId"])
         .index("by_project", ["projectId"])
-        .index("by_user", ["userId"]),
+        .index("by_user", ["userId"])
+        .index("by_purchase_order", ["purchaseOrderId"]),
 
     changeOrders: defineTable({
         userId: v.string(),

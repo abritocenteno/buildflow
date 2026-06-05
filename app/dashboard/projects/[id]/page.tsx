@@ -9,7 +9,7 @@ import { useState } from "react";
 import {
     ArrowLeft, Edit2, Building2, MapPin, Calendar, DollarSign,
     Plus, Trash2, CheckCircle, Clock, FileText, Package, AlertTriangle,
-    ClipboardCheck, Send, Copy, Check,
+    ClipboardCheck, Send, Copy, Check, Receipt,
 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { SignoffDetailModal } from "@/components/SignoffDetailModal";
@@ -173,9 +173,14 @@ export default function ProjectDetailPage() {
                             </span>
                         </div>
                         <p className="text-sm text-zinc-500 mt-0.5">{project.client?.name}</p>
-                        {(project as any).purchaseOrderNumber && (
+                        {(project as any).purchaseOrderId ? (
+                            <Link href={`/dashboard/purchase-orders/${(project as any).purchaseOrderId}`} className="inline-flex items-center gap-1 mt-1 text-xs font-mono font-medium text-sky-600 hover:text-sky-700 hover:underline transition-colors">
+                                <Receipt size={11} />
+                                {(project as any).purchaseOrderNumber}
+                            </Link>
+                        ) : (project as any).purchaseOrderNumber ? (
                             <p className="text-xs text-zinc-400 mt-0.5">PO: <span className="font-mono font-medium text-zinc-600">{(project as any).purchaseOrderNumber}</span></p>
-                        )}
+                        ) : null}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

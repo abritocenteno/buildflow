@@ -24,6 +24,7 @@ import type * as orders from "../orders.js";
 import type * as permits from "../permits.js";
 import type * as portal from "../portal.js";
 import type * as projects from "../projects.js";
+import type * as purchaseOrders from "../purchaseOrders.js";
 import type * as quotes from "../quotes.js";
 import type * as reports from "../reports.js";
 import type * as resend from "../resend.js";
@@ -58,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   permits: typeof permits;
   portal: typeof portal;
   projects: typeof projects;
+  purchaseOrders: typeof purchaseOrders;
   quotes: typeof quotes;
   reports: typeof reports;
   resend: typeof resend;

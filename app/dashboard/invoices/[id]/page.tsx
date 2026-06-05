@@ -20,6 +20,7 @@ import {
     FolderKanban,
     Timer,
     Trash2,
+    Receipt,
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import jsPDF from "jspdf";
@@ -610,6 +611,24 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                         <div className="flex-1">
                             <p className="text-xs text-zinc-400 uppercase tracking-wider font-semibold">Linked Project</p>
                             <p className="text-sm font-semibold text-zinc-900 group-hover:text-sky-500 transition-colors">{project.title}</p>
+                        </div>
+                        <ChevronDown size={16} className="text-zinc-300 group-hover:text-sky-500 -rotate-90 transition-colors" />
+                    </Link>
+                </div>
+            )}
+
+            {/* PO link */}
+            {(invoice as any).purchaseOrderId && (
+                <div className="bg-white rounded-2xl border border-zinc-200 p-4">
+                    <Link href={`/dashboard/purchase-orders/${(invoice as any).purchaseOrderId}`} className="flex items-center gap-3 group">
+                        <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center text-sky-500">
+                            <Receipt size={16} />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-xs text-zinc-400 uppercase tracking-wider font-semibold">Purchase Order</p>
+                            <p className="text-sm font-semibold font-mono text-zinc-900 group-hover:text-sky-500 transition-colors">
+                                {(invoice as any).purchaseOrderNumber || (invoice as any).purchaseOrderId}
+                            </p>
                         </div>
                         <ChevronDown size={16} className="text-zinc-300 group-hover:text-sky-500 -rotate-90 transition-colors" />
                     </Link>
