@@ -196,7 +196,7 @@ export const parsePoPdf = action({
         const base64Data = arrayBufferToBase64(buffer);
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
         const prompt = `You are parsing a Purchase Order (PO) document. Extract the following fields and return ONLY valid JSON with no markdown formatting:
 {
