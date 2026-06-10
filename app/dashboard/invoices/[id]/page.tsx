@@ -1,6 +1,6 @@
 "use client";
 
-import { use, Suspense, useState, useRef } from "react";
+import { use, Suspense, useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -37,6 +37,78 @@ const TYPE_BADGE: Record<string, string> = {
     final: "bg-zinc-100 text-zinc-700",
     deposit: "bg-purple-50 text-purple-700 border border-purple-100",
 };
+
+async function buildSignoffPdf(signoff: any, projectTitle: string, companyName: string): Promise<string> {
+    const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4", compress: true });
+    const margin = 20;
+    const pageWidth = 210;
+    let y = margin;
+
+    pdf.setFillColor(14, 165, 233);
+    pdf.rect(0, 0, pageWidth, 2, "F");
+
+    pdf.setFontSize(22);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(24, 24, 27);
+    pdf.text("Work Sign-Off", margin, y + 8);
+    y += 18;
+
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(113, 113, 122);
+    pdf.text(companyName, margin, y);
+    y += 10;
+
+    pdf.setDrawColor(228, 228, 231);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 10;
+
+    const field = (label: string, value: string) => {
+        if (!value) return;
+        pdf.setFontSize(8);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(161, 161, 170);
+        pdf.text(label.toUpperCase(), margin, y);
+        y += 5;
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(24, 24, 27);
+        const lines = pdf.splitTextToSize(value, pageWidth - margin * 2);
+        pdf.text(lines, margin, y);
+        y += lines.length * 6 + 6;
+    };
+
+    field("Project", projectTitle || "—");
+    field("Signed by", signoff.supervisorName || "—");
+    if (signoff.completedAt) {
+        field("Date signed", new Date(signoff.completedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }));
+    }
+    if (signoff.checkIn || signoff.checkOut) {
+        const times = [signoff.checkIn && `Check-in: ${signoff.checkIn}`, signoff.checkOut && `Check-out: ${signoff.checkOut}`].filter(Boolean).join("   ·   ");
+        field("Times", times as string);
+    }
+    if (signoff.workDescription) field("Work Description", signoff.workDescription);
+
+    if (signoff.signatureData) {
+        y += 4;
+        pdf.setFontSize(8);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(161, 161, 170);
+        pdf.text("SIGNATURE", margin, y);
+        y += 5;
+        try {
+            pdf.addImage(signoff.signatureData, "PNG", margin, y, 70, 28);
+        } catch { /* skip if image fails */ }
+    }
+
+    pdf.setFontSize(8);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(161, 161, 170);
+    pdf.text(`© ${new Date().getFullYear()} ${companyName}`, margin, 285);
+    pdf.text("Work Sign-Off Document", pageWidth - margin, 285, { align: "right" });
+
+    return pdf.output("datauristring").split(",")[1];
+}
 
 async function buildPdf(el: HTMLElement, compress = false): Promise<jsPDF> {
     const A4W = 210, A4H = 297;
@@ -95,6 +167,12 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     const invoice = useQuery(api.invoices.get, { id });
     const settings = useQuery(api.settings.get);
 
+    const projectSignoffs = useQuery(
+        api.signoffs.listByProject,
+        invoice?.projectId ? { projectId: invoice.projectId as Id<"projects"> } : "skip"
+    ) ?? [];
+    const completedSignoffs = projectSignoffs.filter((s: any) => s.status === "completed");
+
     const unbilledEntries = useQuery(
         api.timeEntries.listUnbilledByProject,
         invoice?.projectId ? { projectId: invoice.projectId as Id<"projects"> } : "skip"
@@ -117,6 +195,12 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     const [isMarkingPaid, setIsMarkingPaid] = useState(false);
     const [isImportingTime, setIsImportingTime] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [showSendDialog, setShowSendDialog] = useState(false);
+    const [selectedSignoffs, setSelectedSignoffs] = useState<Set<string>>(new Set());
+
+    useEffect(() => {
+        setSelectedSignoffs(new Set(completedSignoffs.map((s: any) => s._id)));
+    }, [projectSignoffs.length]);
 
     const handleMarkPaid = async () => {
         if (!invoice) return;
@@ -149,7 +233,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
         }
     };
 
-    const handleSendEmail = async () => {
+    const handleSendEmail = async (signoffIdsToInclude: string[]) => {
         if (!invoiceRef.current || !invoice) return;
         const client = (invoice as any).client;
         if (!client?.email) { alert("Client has no email address."); return; }
@@ -158,6 +242,15 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
         try {
             const pdf = await buildPdf(invoiceRef.current, true);
             const base64 = pdf.output("datauristring").split(",")[1];
+
+            const signoffAttachments = [];
+            for (const sfId of signoffIdsToInclude) {
+                const sf = completedSignoffs.find((s: any) => s._id === sfId);
+                if (!sf) continue;
+                const sfBase64 = await buildSignoffPdf(sf, (invoice as any).project?.title || "", settings?.companyName || "Arcocen");
+                const label = sf.supervisorName ? `SignOff_${sf.supervisorName.replace(/\s+/g, "_")}` : "SignOff";
+                signoffAttachments.push({ filename: `${label}.pdf`, content: sfBase64 });
+            }
 
             await sendEmailAction({
                 invoiceNumber: invoice.invoiceNumber,
@@ -168,6 +261,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                 amount: invoice.amount,
                 projectTitle: (invoice as any).project?.title,
                 pdfBase64: base64,
+                extraAttachments: signoffAttachments.length > 0 ? signoffAttachments : undefined,
             });
 
             setSendSuccess(true);
@@ -278,17 +372,77 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                         PDF
                     </button>
 
-                    <button
-                        onClick={handleSendEmail}
-                        disabled={isSending || sendSuccess}
-                        className={cn(
-                            "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50",
-                            sendSuccess ? "bg-emerald-500 text-white" : "bg-white border border-zinc-200 hover:bg-zinc-50"
+                    <div className="relative">
+                        <button
+                            onClick={() => {
+                                if (completedSignoffs.length === 0) {
+                                    handleSendEmail([]);
+                                } else {
+                                    setShowSendDialog((v) => !v);
+                                }
+                            }}
+                            disabled={isSending || sendSuccess}
+                            className={cn(
+                                "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50",
+                                sendSuccess ? "bg-emerald-500 text-white" : "bg-white border border-zinc-200 hover:bg-zinc-50"
+                            )}
+                        >
+                            {isSending ? <Loader2 size={15} className="animate-spin" /> : sendSuccess ? <CheckCircle2 size={15} /> : <Mail size={15} />}
+                            {sendSuccess ? "Sent!" : "Email"}
+                            {completedSignoffs.length > 0 && !sendSuccess && !isSending && (
+                                <ChevronDown size={13} className={cn("transition-transform", showSendDialog && "rotate-180")} />
+                            )}
+                        </button>
+
+                        {showSendDialog && (
+                            <>
+                                <div className="fixed inset-0 z-10" onClick={() => setShowSendDialog(false)} />
+                                <div className="absolute right-0 top-full mt-2 z-20 w-72 bg-white border border-zinc-200 rounded-2xl shadow-2xl overflow-hidden">
+                                    <div className="px-5 pt-5 pb-3">
+                                        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Attachments</p>
+                                        <div className="space-y-2.5">
+                                            <label className="flex items-center gap-2.5">
+                                                <input type="checkbox" checked readOnly className="rounded accent-sky-500" />
+                                                <span className="text-sm text-zinc-700 font-medium flex-1">Invoice PDF</span>
+                                                <span className="text-xs text-zinc-400">always</span>
+                                            </label>
+                                            {completedSignoffs.map((s: any) => (
+                                                <label key={s._id} className="flex items-center gap-2.5 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedSignoffs.has(s._id)}
+                                                        onChange={(e) => setSelectedSignoffs((prev) => {
+                                                            const next = new Set(prev);
+                                                            e.target.checked ? next.add(s._id) : next.delete(s._id);
+                                                            return next;
+                                                        })}
+                                                        className="rounded accent-sky-500"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm text-zinc-700 font-medium">Sign-off</p>
+                                                        <p className="text-xs text-zinc-400 truncate">
+                                                            {s.supervisorName ? `Signed by ${s.supervisorName}` : ""}
+                                                            {s.completedAt ? ` · ${new Date(s.completedAt).toLocaleDateString("en-GB")}` : ""}
+                                                        </p>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="px-5 pb-5 pt-3 border-t border-zinc-100">
+                                        <button
+                                            onClick={() => { setShowSendDialog(false); handleSendEmail(Array.from(selectedSignoffs)); }}
+                                            disabled={isSending}
+                                            className="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                        >
+                                            <Mail size={15} />
+                                            Send Invoice
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
                         )}
-                    >
-                        {isSending ? <Loader2 size={15} className="animate-spin" /> : sendSuccess ? <CheckCircle2 size={15} /> : <Mail size={15} />}
-                        {sendSuccess ? "Sent!" : "Email"}
-                    </button>
+                    </div>
 
                     {invoice.status === "overdue" && (
                         <button
