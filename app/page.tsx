@@ -213,7 +213,7 @@ export default function LandingPage() {
             </div>
 
             {/* ── FEATURES ──────────────────────────────────── */}
-            <section id="features" className="bg-white dark:bg-zinc-950 py-28">
+            <section id="features" className="bg-white dark:bg-zinc-950 py-28 scroll-mt-16">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-16">
                         <p className="text-xs font-black text-sky-500 uppercase tracking-widest mb-3">Everything you need</p>
@@ -245,7 +245,7 @@ export default function LandingPage() {
             </section>
 
             {/* ── PRICING ───────────────────────────────────── */}
-            <section id="pricing" className="py-28 bg-[#09090b] relative overflow-hidden">
+            <section id="pricing" className="py-28 bg-[#09090b] relative overflow-hidden scroll-mt-16">
                 {/* subtle glow */}
                 <div className="pointer-events-none absolute inset-0"
                     style={{ background: "radial-gradient(ellipse 70% 60% at 50% 100%, rgba(14,165,233,0.1) 0%, transparent 70%)" }} />
