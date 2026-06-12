@@ -22,6 +22,7 @@ import {
     HardHat,
     ClipboardList,
     Receipt,
+    ShieldCheck,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -86,6 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         api.files.getUrl,
         settings?.logoStorageId ? { storageId: settings.logoStorageId } : "skip"
     );
+    const isAdmin = useQuery(api.settings.getAllSettings) !== null;
 
     useEffect(() => {
         if (settings === null) {
@@ -108,6 +110,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { label: "Timesheet", icon: Clock, href: "/dashboard/timesheet" },
         { label: "Reports", icon: BarChart2, href: "/dashboard/reports" },
         { label: "Settings", icon: Settings, href: "/dashboard/settings" },
+        ...(isAdmin ? [{ label: "Admin", icon: ShieldCheck, href: "/admin" }] : []),
     ];
 
     const companyName = settings?.companyName || "BuildFlow";
