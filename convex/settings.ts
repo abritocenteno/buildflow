@@ -90,6 +90,20 @@ export const requestNameChange = mutation({
     },
 });
 
+export const isAdmin = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return false;
+        // Fall back to stored user record in case email isn't in JWT claims
+        const user = await ctx.db.query("users" as any)
+            .withIndex("by_token", (q: any) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+            .unique();
+        const email = user?.email ?? identity.email;
+        return email === process.env.ADMIN_EMAIL;
+    },
+});
+
 // Admin-only queries and mutations
 
 export const getAllSettings = query({

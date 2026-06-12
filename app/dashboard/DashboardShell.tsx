@@ -88,8 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         api.files.getUrl,
         settings?.logoStorageId ? { storageId: settings.logoStorageId } : "skip"
     );
-    const adminData = useQuery(api.settings.getAllSettings);
-    const isAdmin = adminData !== null && adminData !== undefined;
+    const isAdmin = useQuery(api.settings.isAdmin) === true;
 
     useEffect(() => {
         if (isAuthenticated && settings === null) {
