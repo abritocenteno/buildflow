@@ -3,13 +3,14 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
-import { Save, Building2 } from "lucide-react";
+import { Save, Building2, Pencil, X } from "lucide-react";
 
 export default function SettingsPage() {
     const settings = useQuery(api.settings.get);
     const upsertSettings = useMutation(api.settings.upsert);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
+    const [editingName, setEditingName] = useState(false);
 
     const [form, setForm] = useState({
         companyName: "",
@@ -82,6 +83,7 @@ export default function SettingsPage() {
         });
         setSaving(false);
         setSaved(true);
+        setEditingName(false);
         setTimeout(() => setSaved(false), 3000);
     };
 
@@ -106,8 +108,36 @@ export default function SettingsPage() {
                         <h2 className="font-semibold text-sm text-zinc-900">Company Information</h2>
                     </div>
                     <div>
-                        <label className={labelCls}>Company Name *</label>
-                        <input className={inputCls} value={form.companyName} onChange={(e) => set("companyName", e.target.value)} required />
+                        <label className={labelCls}>Company Name</label>
+                        {editingName ? (
+                            <div className="flex gap-2">
+                                <input
+                                    className={inputCls}
+                                    value={form.companyName}
+                                    onChange={(e) => set("companyName", e.target.value)}
+                                    autoFocus
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => { set("companyName", settings?.companyName ?? ""); setEditingName(false); }}
+                                    className="p-2.5 rounded-xl border border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50 transition-all"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingName(true)}
+                                    className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-sky-500 transition-colors ml-4"
+                                >
+                                    <Pencil size={12} /> Edit
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <label className={labelCls}>Address Line 1</label>
