@@ -32,7 +32,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Authenticated, Unauthenticated, AuthLoading, useQuery } from "convex/react";
+import { Authenticated, Unauthenticated, AuthLoading, useQuery, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 function SessionRecoveryButton() {
@@ -82,12 +82,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const router = useRouter();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const settings = useQuery(api.settings.get);
+    const { isAuthenticated } = useConvexAuth();
+    const settings = useQuery(api.settings.get, isAuthenticated ? {} : "skip");
     const logoUrl = useQuery(
         api.files.getUrl,
         settings?.logoStorageId ? { storageId: settings.logoStorageId } : "skip"
     );
-    const isAdmin = useQuery(api.settings.getAllSettings) !== null;
+    const adminData = useQuery(api.settings.getAllSettings, isAuthenticated ? {} : "skip");
+    const isAdmin = adminData !== null && adminData !== undefined;
 
     useEffect(() => {
         if (settings === null) {
