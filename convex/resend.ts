@@ -10,7 +10,7 @@ function replaceVars(template: string, vars: Record<string, string>): string {
 function fromAddress(senderName: string): string {
     const domain = process.env.RESEND_FROM_DOMAIN || "onboarding@resend.dev";
     if (domain.includes("@")) return domain; // full address already
-    return `${senderName} <billing@${domain}>`;
+    return `${senderName} <info@${domain}>`;
 }
 
 export const sendInvoiceEmail = action({
