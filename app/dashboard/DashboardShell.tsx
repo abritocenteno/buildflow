@@ -82,6 +82,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const settings = useQuery(api.settings.get);
+    const logoUrl = useQuery(
+        api.files.getUrl,
+        settings?.logoStorageId ? { storageId: settings.logoStorageId } : "skip"
+    );
 
     useEffect(() => {
         if (settings === null) {
@@ -109,9 +113,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const companyName = settings?.companyName || "BuildFlow";
     const Logo = () => (
         <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/30 flex-shrink-0">
-                <span className="font-black text-base leading-none">{companyName[0]}</span>
-            </div>
+            {logoUrl ? (
+                <img src={logoUrl} alt={companyName} className="w-8 h-8 rounded-xl object-contain flex-shrink-0" />
+            ) : (
+                <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/30 flex-shrink-0">
+                    <span className="font-black text-base leading-none">{companyName[0]}</span>
+                </div>
+            )}
             {!collapsed && (
                 <span className="font-black text-xl tracking-tight text-zinc-900 truncate">
                     {companyName}
