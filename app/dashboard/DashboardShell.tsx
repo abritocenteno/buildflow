@@ -26,6 +26,7 @@ import {
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { DashboardTitle } from "@/components/DashboardTitle";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -120,6 +121,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     return (
         <div className="min-h-screen bg-zinc-50 flex">
+            <DashboardTitle />
             <GlobalSearch />
 
             {/* Desktop Sidebar */}

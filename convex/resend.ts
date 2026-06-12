@@ -34,7 +34,7 @@ export const sendInvoiceEmail = action({
 
         const resend = new Resend(resendApiKey);
         const settings = await ctx.runQuery(api.settings.get);
-        const company = args.companyName || settings?.companyName || "Arcocen";
+        const company = args.companyName || settings?.companyName || "BuildFlow";
         const senderName = settings?.emailSenderName || company;
         const currency = settings?.currency ?? "EUR";
         const bankAccounts = settings?.bankAccounts ?? "";
@@ -107,7 +107,7 @@ export const sendOverdueReminderEmail = action({
         if (!client?.email) throw new Error("Client has no email address on file");
 
         const settings = await ctx.runQuery(api.settings.get);
-        const companyName = settings?.companyName ?? "Arcocen";
+        const companyName = settings?.companyName ?? "BuildFlow";
         const contactEmail = settings?.contactEmail ?? "";
         const phone = settings?.phone ?? "";
         const bankAccounts = settings?.bankAccounts ?? "";
@@ -223,7 +223,7 @@ export const sendSignoffRequestEmail = action({
 
         const resend = new Resend(resendApiKey);
         const settings = await ctx.runQuery(api.settings.get);
-        const company = settings?.companyName ?? "Arcocen";
+        const company = settings?.companyName ?? "BuildFlow";
         const senderName = settings?.emailSenderName || company;
         const replyTo = settings?.contactEmail;
 
@@ -279,7 +279,7 @@ export const sendSignoffCompletionEmail = action({
         if (signoff.status !== "completed") throw new Error("Sign-off is not yet completed");
 
         const settings = await ctx.runQuery(api.settings.get);
-        const company = settings?.companyName ?? "Arcocen";
+        const company = settings?.companyName ?? "BuildFlow";
         const senderName = settings?.emailSenderName || company;
         const replyTo = settings?.contactEmail;
 

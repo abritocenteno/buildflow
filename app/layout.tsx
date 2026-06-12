@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arcocen — Construction Management Platform",
+  title: "BuildFlow — Construction Management Platform",
   description: "The complete project management platform for contractors and construction businesses.",
 };
 
