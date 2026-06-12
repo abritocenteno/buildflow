@@ -23,15 +23,15 @@ import {
     ClipboardList,
     Receipt,
 } from "lucide-react";
-import Image from "next/image";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { NotificationBell } from "@/components/NotificationBell";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { Authenticated, Unauthenticated, AuthLoading, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 function SessionRecoveryButton() {
     return (
@@ -77,8 +77,16 @@ const SidebarItem = ({
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const settings = useQuery(api.settings.get);
+
+    useEffect(() => {
+        if (settings === null) {
+            router.push("/onboarding");
+        }
+    }, [settings]);
 
     const navigation = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -99,16 +107,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     const Logo = () => (
         <div className="flex items-center gap-2.5">
-            <Image
-                src="/arcocen-logo.png"
-                alt="Arcocen"
-                width={32}
-                height={32}
-                className="rounded-lg flex-shrink-0"
-            />
+            <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/30 flex-shrink-0">
+                <span className="font-black text-base leading-none">B</span>
+            </div>
             {!collapsed && (
-                <span className="font-bold text-xl tracking-tight text-zinc-900">
-                    Arco<span className="text-sky-500">cen</span>
+                <span className="font-black text-xl tracking-tight text-zinc-900">
+                    Build<span className="text-sky-500">Flow</span>
                 </span>
             )}
         </div>
