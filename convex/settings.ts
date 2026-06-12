@@ -12,8 +12,9 @@ async function getUserId(ctx: any) {
 export const get = query({
     args: {},
     handler: async (ctx) => {
-        const userId = await getUserId(ctx);
-        return await ctx.db.query("settings").withIndex("by_user", (q: any) => q.eq("userId", userId)).unique();
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return null;
+        return await ctx.db.query("settings").withIndex("by_user", (q: any) => q.eq("userId", identity.tokenIdentifier)).unique();
     },
 });
 

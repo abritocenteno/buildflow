@@ -83,19 +83,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const { isAuthenticated } = useConvexAuth();
-    const settings = useQuery(api.settings.get, isAuthenticated ? {} : "skip");
+    const settings = useQuery(api.settings.get);
     const logoUrl = useQuery(
         api.files.getUrl,
         settings?.logoStorageId ? { storageId: settings.logoStorageId } : "skip"
     );
-    const adminData = useQuery(api.settings.getAllSettings, isAuthenticated ? {} : "skip");
+    const adminData = useQuery(api.settings.getAllSettings);
     const isAdmin = adminData !== null && adminData !== undefined;
 
     useEffect(() => {
-        if (settings === null) {
+        if (isAuthenticated && settings === null) {
             router.push("/onboarding");
         }
-    }, [settings]);
+    }, [isAuthenticated, settings]);
 
     const navigation = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
