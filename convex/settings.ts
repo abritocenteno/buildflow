@@ -1,6 +1,12 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+async function assertAdmin(ctx: any) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity || identity.email !== process.env.ADMIN_EMAIL) throw new Error("Unauthorized");
+    return identity;
+}
+
 const NAME_CHANGE_LIMIT = 1;
 
 async function getUserId(ctx: any) {
@@ -185,5 +191,39 @@ export const getMyNameChangeRequest = query({
             .withIndex("by_user", (q: any) => q.eq("userId", userId))
             .collect();
         return requests.find((r: any) => r.status === "pending") ?? null;
+    },
+});
+
+export const getAllowedEmails = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity || identity.email !== process.env.ADMIN_EMAIL) return null;
+        return await ctx.db.query("allowedEmails").collect();
+    },
+});
+
+export const addAllowedEmail = mutation({
+    args: { email: v.string() },
+    handler: async (ctx, { email }) => {
+        const identity = await assertAdmin(ctx);
+        const normalised = email.trim().toLowerCase();
+        const existing = await ctx.db.query("allowedEmails")
+            .withIndex("by_email", (q: any) => q.eq("email", normalised))
+            .unique();
+        if (existing) return; // already there
+        await ctx.db.insert("allowedEmails", {
+            email: normalised,
+            addedAt: Date.now(),
+            addedBy: identity.email ?? "",
+        });
+    },
+});
+
+export const removeAllowedEmail = mutation({
+    args: { id: v.id("allowedEmails") },
+    handler: async (ctx, { id }) => {
+        await assertAdmin(ctx);
+        await ctx.db.delete(id);
     },
 });

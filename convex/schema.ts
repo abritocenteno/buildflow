@@ -382,4 +382,10 @@ export default defineSchema({
         .index("by_token", ["token"])
         .index("by_project", ["projectId"])
         .index("by_user", ["userId"]),
+
+    allowedEmails: defineTable({
+        email: v.string(),
+        addedAt: v.number(),
+        addedBy: v.string(),
+    }).index("by_email", ["email"]),
 });

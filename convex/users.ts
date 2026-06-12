@@ -31,9 +31,9 @@ export const store = mutation({
             return user._id;
         }
 
-        const allowedEmails = process.env.ALLOWED_EMAILS;
-        if (allowedEmails) {
-            const list = allowedEmails.split(",").map((e) => e.trim().toLowerCase());
+        const allowedList = await ctx.db.query("allowedEmails").collect();
+        if (allowedList.length > 0) {
+            const list = allowedList.map((e: any) => e.email.toLowerCase());
             if (!list.includes((identity.email ?? "").toLowerCase())) {
                 throw new ConvexError("unauthorized");
             }

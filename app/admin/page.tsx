@@ -3,7 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
-import { Check, X, Clock, Users, FolderKanban, FileText, Building2 } from "lucide-react";
+import { Check, X, Clock, Users, FolderKanban, FileText, Building2, Mail, Plus, Trash2 } from "lucide-react";
 
 function formatDate(ts: number) {
     return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -23,8 +23,13 @@ export default function AdminPage() {
     const allSettings = useQuery(api.settings.getAllSettings);
     const pendingRequests = useQuery(api.settings.getPendingNameChangeRequests);
     const companyStats = useQuery(api.settings.getCompanyStats);
+    const allowedEmails = useQuery(api.settings.getAllowedEmails);
     const resolveRequest = useMutation(api.settings.resolveNameChangeRequest);
+    const addAllowedEmail = useMutation(api.settings.addAllowedEmail);
+    const removeAllowedEmail = useMutation(api.settings.removeAllowedEmail);
     const [resolving, setResolving] = useState<string | null>(null);
+    const [newEmail, setNewEmail] = useState("");
+    const [addingEmail, setAddingEmail] = useState(false);
 
     const loading = allSettings === undefined || pendingRequests === undefined;
     const unauthorized = !loading && (allSettings === null || pendingRequests === null);
@@ -140,6 +145,73 @@ export default function AdminPage() {
                                             <X size={13} /> Reject
                                         </button>
                                     </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Allowed emails */}
+                <div className={cardCls}>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Mail size={18} className="text-sky-500" />
+                        <h2 className="font-semibold text-zinc-900">Allowed Emails</h2>
+                    </div>
+                    <p className="text-xs text-zinc-400 mb-4">
+                        {allowedEmails?.length === 0
+                            ? "List is empty — anyone with a valid account can sign up."
+                            : "Only these emails can create an account."}
+                    </p>
+
+                    {/* Add email */}
+                    <div className="flex gap-2 mb-4">
+                        <input
+                            type="email"
+                            value={newEmail}
+                            onChange={e => setNewEmail(e.target.value)}
+                            onKeyDown={async e => {
+                                if (e.key === "Enter" && newEmail.trim()) {
+                                    setAddingEmail(true);
+                                    await addAllowedEmail({ email: newEmail.trim() });
+                                    setNewEmail("");
+                                    setAddingEmail(false);
+                                }
+                            }}
+                            placeholder="name@example.com"
+                            className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all"
+                        />
+                        <button
+                            disabled={!newEmail.trim() || addingEmail}
+                            onClick={async () => {
+                                if (!newEmail.trim()) return;
+                                setAddingEmail(true);
+                                await addAllowedEmail({ email: newEmail.trim() });
+                                setNewEmail("");
+                                setAddingEmail(false);
+                            }}
+                            className="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all"
+                        >
+                            <Plus size={14} /> Add
+                        </button>
+                    </div>
+
+                    {allowedEmails === undefined ? (
+                        <div className="flex justify-center py-4">
+                            <div className="w-5 h-5 border-2 border-zinc-200 border-t-sky-500 rounded-full animate-spin" />
+                        </div>
+                    ) : (allowedEmails as any[]).length === 0 ? (
+                        <p className="text-sm text-zinc-300 text-center py-4 border border-dashed border-zinc-200 rounded-xl">No restrictions set</p>
+                    ) : (
+                        <div className="space-y-1">
+                            {(allowedEmails as any[]).map((entry: any) => (
+                                <div key={entry._id} className="flex items-center justify-between px-3 py-2 bg-zinc-50 rounded-xl">
+                                    <span className="text-sm text-zinc-700">{entry.email}</span>
+                                    <button
+                                        onClick={() => removeAllowedEmail({ id: entry._id })}
+                                        className="p-1 text-zinc-300 hover:text-red-500 transition-colors"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
                                 </div>
                             ))}
                         </div>
