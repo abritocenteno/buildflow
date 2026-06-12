@@ -31,13 +31,8 @@ export const store = mutation({
             return user._id;
         }
 
-        const allowedList = await ctx.db.query("allowedEmails").collect();
-        if (allowedList.length > 0) {
-            const list = allowedList.map((e: any) => e.email.toLowerCase());
-            if (!list.includes((identity.email ?? "").toLowerCase())) {
-                throw new ConvexError("unauthorized");
-            }
-        }
+        // Access control is currently handled by Clerk's allowlist.
+        // When Stripe is set up, check the allowedEmails table here instead.
 
         return await ctx.db.insert("users", {
             name: identity.name,
