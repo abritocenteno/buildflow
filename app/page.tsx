@@ -89,7 +89,7 @@ export default function LandingPage() {
         <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white overflow-x-hidden">
 
             {/* ── NAV ───────────────────────────────────────── */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-[#09090b]/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
                     <Logo dark />
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
                 </div>
 
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-white/5 px-6 py-4 space-y-3 bg-zinc-950">
+                    <div className="md:hidden border-t border-white/5 px-6 py-4 space-y-3 bg-[#09090b]">
                         <a href="#features" className="block text-sm font-medium text-zinc-300" onClick={() => setMobileMenuOpen(false)}>Features</a>
                         <a href="#pricing"  className="block text-sm font-medium text-zinc-300" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
                         <SignInButton mode="redirect">
@@ -132,7 +132,7 @@ export default function LandingPage() {
             </nav>
 
             {/* ── HERO ──────────────────────────────────────── */}
-            <section className="relative bg-zinc-950 pt-40 pb-16">
+            <section className="relative bg-[#09090b] pt-40 pb-16">
                 {/* background: overflow-hidden scoped here so cards aren't clipped */}
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     {/* radial sky glow */}
@@ -186,7 +186,7 @@ export default function LandingPage() {
                             const a = highlightAccent[color];
                             return (
                                 <div key={title}
-                                    className={`bg-zinc-900 border border-white/8 rounded-2xl p-6 ring-1 ${a.ring} backdrop-blur-sm`}
+                                    className={`bg-[#18181b] border border-white/8 rounded-2xl p-6 ring-1 ${a.ring} backdrop-blur-sm`}
                                 >
                                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-4 ${accentMap[color]?.bg}`}>
                                         <Icon size={18} className={a.icon} />
@@ -245,7 +245,7 @@ export default function LandingPage() {
             </section>
 
             {/* ── PRICING ───────────────────────────────────── */}
-            <section id="pricing" className="py-28 bg-zinc-950 relative overflow-hidden">
+            <section id="pricing" className="py-28 bg-[#09090b] relative overflow-hidden">
                 {/* subtle glow */}
                 <div className="pointer-events-none absolute inset-0"
                     style={{ background: "radial-gradient(ellipse 70% 60% at 50% 100%, rgba(14,165,233,0.1) 0%, transparent 70%)" }} />
@@ -263,7 +263,7 @@ export default function LandingPage() {
                     </p>
 
                     {/* Toggle */}
-                    <div className="inline-flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-2xl p-1 mb-10">
+                    <div className="inline-flex items-center gap-1 bg-[#18181b] border border-white/10 rounded-2xl p-1 mb-10">
                         <button
                             onClick={() => setAnnual(false)}
                             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${!annual ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-400 hover:text-zinc-200"}`}
@@ -286,7 +286,7 @@ export default function LandingPage() {
                         {/* gradient ring */}
                         <div className="absolute -inset-[1px] rounded-3xl"
                             style={{ background: "linear-gradient(135deg, rgba(14,165,233,0.6) 0%, rgba(124,58,237,0.4) 50%, rgba(14,165,233,0.2) 100%)" }} />
-                        <div className="relative bg-zinc-900 rounded-3xl p-8 text-left">
+                        <div className="relative bg-[#18181b] rounded-3xl p-8 text-left">
                             <div className="flex items-start justify-between mb-6">
                                 <div>
                                     <p className="text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">BuildFlow Pro</p>
@@ -361,7 +361,7 @@ export default function LandingPage() {
             </section>
 
             {/* ── FOOTER ────────────────────────────────────── */}
-            <footer className="bg-zinc-950 border-t border-white/5 py-10">
+            <footer className="bg-[#09090b] border-t border-white/5 py-10">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
                     <Logo dark />
                     <p className="text-xs text-zinc-600">© {new Date().getFullYear()} BuildFlow. All rights reserved.</p>
