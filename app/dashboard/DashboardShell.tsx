@@ -37,11 +37,11 @@ import { api } from "@/convex/_generated/api";
 function SessionRecoveryButton() {
     return (
         <button
-            onClick={() => window.location.reload()}
+            onClick={() => window.location.href = "/sign-in"}
             className="flex items-center gap-2 bg-black text-white px-8 py-3 rounded-xl font-bold hover:bg-zinc-800 transition-all active:scale-95 shadow-lg shadow-black/10"
         >
             <RefreshCw size={18} />
-            Reconnect Session
+            Sign In
         </button>
     );
 }
@@ -242,7 +242,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </div>
                             <div className="text-center space-y-2">
                                 <h2 className="text-2xl font-bold tracking-tight">Access Restricted</h2>
-                                <p className="text-zinc-500 max-w-sm">Please sign in to access the Arcocen dashboard.</p>
+                                <p className="text-zinc-500 max-w-sm">Please sign in to access the BuildFlow dashboard.</p>
                             </div>
                             <SessionRecoveryButton />
                         </div>
