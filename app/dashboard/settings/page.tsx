@@ -3,14 +3,19 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
-import { Save, Building2, Pencil, X } from "lucide-react";
+import { Save, Building2, Pencil, X, Send, Clock } from "lucide-react";
 
 export default function SettingsPage() {
     const settings = useQuery(api.settings.get);
     const upsertSettings = useMutation(api.settings.upsert);
+    const requestNameChange = useMutation(api.settings.requestNameChange);
+    const pendingRequest = useQuery(api.settings.getMyNameChangeRequest);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [editingName, setEditingName] = useState(false);
+    const [requestingName, setRequestingName] = useState(false);
+    const [requestedName, setRequestedName] = useState("");
+    const [requestSent, setRequestSent] = useState(false);
 
     const [form, setForm] = useState({
         companyName: "",
@@ -109,35 +114,82 @@ export default function SettingsPage() {
                     </div>
                     <div>
                         <label className={labelCls}>Company Name</label>
-                        {editingName ? (
-                            <div className="flex gap-2">
-                                <input
-                                    className={inputCls}
-                                    value={form.companyName}
-                                    onChange={(e) => set("companyName", e.target.value)}
-                                    autoFocus
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => { set("companyName", settings?.companyName ?? ""); setEditingName(false); }}
-                                    className="p-2.5 rounded-xl border border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50 transition-all"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
-                                <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => setEditingName(true)}
-                                    className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-sky-500 transition-colors ml-4"
-                                >
-                                    <Pencil size={12} /> Edit
-                                </button>
-                            </div>
-                        )}
+                        {(() => {
+                            const changeCount = settings?.companyNameChangeCount ?? 0;
+                            const limitReached = changeCount >= 1;
+
+                            if (editingName) return (
+                                <div className="flex gap-2">
+                                    <input className={inputCls} value={form.companyName} onChange={(e) => set("companyName", e.target.value)} autoFocus required />
+                                    <button type="button" onClick={() => { set("companyName", settings?.companyName ?? ""); setEditingName(false); }} className="p-2.5 rounded-xl border border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50 transition-all">
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            );
+
+                            if (!limitReached) return (
+                                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                    <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                    <button type="button" onClick={() => setEditingName(true)} className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-sky-500 transition-colors ml-4">
+                                        <Pencil size={12} /> Edit
+                                    </button>
+                                </div>
+                            );
+
+                            if (pendingRequest) return (
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                        <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+                                        <Clock size={13} />
+                                        <span>Name change to <strong>"{pendingRequest.requestedName}"</strong> is pending admin approval.</span>
+                                    </div>
+                                </div>
+                            );
+
+                            if (requestSent) return (
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                        <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                    </div>
+                                    <p className="text-xs text-emerald-600 font-medium">Request submitted — we'll review it shortly.</p>
+                                </div>
+                            );
+
+                            if (requestingName) return (
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                        <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input className={inputCls} placeholder="New company name" value={requestedName} onChange={e => setRequestedName(e.target.value)} autoFocus />
+                                        <button type="button" onClick={async () => {
+                                            if (!requestedName.trim()) return;
+                                            await requestNameChange({ requestedName: requestedName.trim() });
+                                            setRequestingName(false);
+                                            setRequestedName("");
+                                            setRequestSent(true);
+                                        }} className="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap">
+                                            <Send size={13} /> Send
+                                        </button>
+                                        <button type="button" onClick={() => { setRequestingName(false); setRequestedName(""); }} className="p-2.5 rounded-xl border border-zinc-200 text-zinc-400 hover:text-zinc-600 transition-all">
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-zinc-400">You've used your free rename. Requests are reviewed within 24h.</p>
+                                </div>
+                            );
+
+                            return (
+                                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50">
+                                    <span className="text-sm font-medium text-zinc-900">{form.companyName}</span>
+                                    <button type="button" onClick={() => setRequestingName(true)} className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-sky-500 transition-colors ml-4">
+                                        <Pencil size={12} /> Request change
+                                    </button>
+                                </div>
+                            );
+                        })()}
                     </div>
                     <div>
                         <label className={labelCls}>Address Line 1</label>

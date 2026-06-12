@@ -321,7 +321,21 @@ export default defineSchema({
         overdueEmailIntro: v.optional(v.string()),
         projectReadyEmailSubject: v.optional(v.string()),
         projectReadyEmailIntro: v.optional(v.string()),
+        companyNameChangeCount: v.optional(v.number()),
     }).index("by_user", ["userId"]),
+
+    nameChangeRequests: defineTable({
+        userId: v.string(),
+        userEmail: v.string(),
+        currentName: v.string(),
+        requestedName: v.string(),
+        status: v.string(), // "pending" | "approved" | "rejected"
+        createdAt: v.number(),
+        resolvedAt: v.optional(v.number()),
+        resolvedBy: v.optional(v.string()),
+    })
+        .index("by_user", ["userId"])
+        .index("by_status", ["status"]),
 
     clientPortals: defineTable({
         clientId: v.id("clients"),
