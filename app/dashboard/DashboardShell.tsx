@@ -106,14 +106,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { label: "Settings", icon: Settings, href: "/dashboard/settings" },
     ];
 
+    const companyName = settings?.companyName || "BuildFlow";
     const Logo = () => (
         <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-500/30 flex-shrink-0">
-                <span className="font-black text-base leading-none">B</span>
+                <span className="font-black text-base leading-none">{companyName[0]}</span>
             </div>
             {!collapsed && (
-                <span className="font-black text-xl tracking-tight text-zinc-900">
-                    Build<span className="text-sky-500">Flow</span>
+                <span className="font-black text-xl tracking-tight text-zinc-900 truncate">
+                    {companyName}
                 </span>
             )}
         </div>
