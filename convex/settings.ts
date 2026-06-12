@@ -99,6 +99,30 @@ export const isAdmin = query({
     },
 });
 
+export const getCompanyStats = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity || identity.email !== process.env.ADMIN_EMAIL) return null;
+
+        const [projects, invoices, clients] = await Promise.all([
+            ctx.db.query("projects").collect(),
+            ctx.db.query("invoices").collect(),
+            ctx.db.query("clients").collect(),
+        ]);
+
+        const stats: Record<string, { projects: number; invoices: number; clients: number }> = {};
+        const bump = (userId: string, key: "projects" | "invoices" | "clients") => {
+            if (!stats[userId]) stats[userId] = { projects: 0, invoices: 0, clients: 0 };
+            stats[userId][key]++;
+        };
+        for (const r of projects) bump(r.userId, "projects");
+        for (const r of invoices) bump(r.userId, "invoices");
+        for (const r of clients) bump(r.userId, "clients");
+        return stats;
+    },
+});
+
 // Admin-only queries and mutations
 
 export const getAllSettings = query({

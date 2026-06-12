@@ -3,19 +3,29 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
-import { Check, X, Clock, Users } from "lucide-react";
+import { Check, X, Clock, Users, FolderKanban, FileText, Building2 } from "lucide-react";
 
 function formatDate(ts: number) {
-    return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function StatPill({ icon: Icon, value, label }: { icon: React.ElementType; value: number; label: string }) {
+    return (
+        <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+            <Icon size={12} className="text-zinc-400" />
+            <span className="font-semibold text-zinc-700">{value}</span>
+            <span>{label}</span>
+        </div>
+    );
 }
 
 export default function AdminPage() {
     const allSettings = useQuery(api.settings.getAllSettings);
     const pendingRequests = useQuery(api.settings.getPendingNameChangeRequests);
+    const companyStats = useQuery(api.settings.getCompanyStats);
     const resolveRequest = useMutation(api.settings.resolveNameChangeRequest);
     const [resolving, setResolving] = useState<string | null>(null);
 
-    // null = loaded but not authorized; undefined = still loading
     const loading = allSettings === undefined || pendingRequests === undefined;
     const unauthorized = !loading && (allSettings === null || pendingRequests === null);
 
@@ -50,6 +60,14 @@ export default function AdminPage() {
         }
     };
 
+    const companies = allSettings as any[];
+    const requests = pendingRequests as any[];
+    const stats = companyStats as Record<string, { projects: number; invoices: number; clients: number }> | null;
+
+    const totalProjects = Object.values(stats ?? {}).reduce((s, c) => s + c.projects, 0);
+    const totalInvoices = Object.values(stats ?? {}).reduce((s, c) => s + c.invoices, 0);
+    const totalClients = Object.values(stats ?? {}).reduce((s, c) => s + c.clients, 0);
+
     const cardCls = "bg-white rounded-2xl border border-zinc-200 p-6";
 
     return (
@@ -60,23 +78,43 @@ export default function AdminPage() {
                     <p className="text-sm text-zinc-500 mt-0.5">Manage companies and requests</p>
                 </div>
 
+                {/* Summary stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {[
+                        { label: "Companies", value: companies.length, icon: Building2, color: "text-sky-500", bg: "bg-sky-50" },
+                        { label: "Projects", value: totalProjects, icon: FolderKanban, color: "text-violet-500", bg: "bg-violet-50" },
+                        { label: "Invoices", value: totalInvoices, icon: FileText, color: "text-emerald-500", bg: "bg-emerald-50" },
+                        { label: "Clients", value: totalClients, icon: Users, color: "text-amber-500", bg: "bg-amber-50" },
+                    ].map(({ label, value, icon: Icon, color, bg }) => (
+                        <div key={label} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center gap-3">
+                            <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
+                                <Icon size={18} className={color} />
+                            </div>
+                            <div>
+                                <p className="text-xl font-bold text-zinc-900 leading-none">{value}</p>
+                                <p className="text-xs text-zinc-400 mt-0.5">{label}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
                 {/* Pending name change requests */}
                 <div className={cardCls}>
                     <div className="flex items-center gap-2 mb-4">
                         <Clock size={18} className="text-amber-500" />
                         <h2 className="font-semibold text-zinc-900">Pending Name Change Requests</h2>
-                        {(pendingRequests as any[]).length > 0 && (
+                        {requests.length > 0 && (
                             <span className="ml-auto bg-amber-100 text-amber-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                                {(pendingRequests as any[]).length}
+                                {requests.length}
                             </span>
                         )}
                     </div>
 
-                    {(pendingRequests as any[]).length === 0 ? (
+                    {requests.length === 0 ? (
                         <p className="text-sm text-zinc-400 text-center py-6">No pending requests.</p>
                     ) : (
                         <div className="space-y-3">
-                            {(pendingRequests as any[]).map((req) => (
+                            {requests.map((req: any) => (
                                 <div key={req._id} className="flex items-center justify-between gap-4 bg-zinc-50 rounded-xl px-4 py-3">
                                     <div className="min-w-0">
                                         <p className="text-sm font-medium text-zinc-900 truncate">
@@ -113,35 +151,40 @@ export default function AdminPage() {
                     <div className="flex items-center gap-2 mb-4">
                         <Users size={18} className="text-sky-500" />
                         <h2 className="font-semibold text-zinc-900">All Companies</h2>
-                        <span className="ml-auto text-xs text-zinc-400">{(allSettings as any[]).length} registered</span>
+                        <span className="ml-auto text-xs text-zinc-400">{companies.length} registered</span>
                     </div>
 
-                    {(allSettings as any[]).length === 0 ? (
+                    {companies.length === 0 ? (
                         <p className="text-sm text-zinc-400 text-center py-6">No companies yet.</p>
                     ) : (
                         <div className="divide-y divide-zinc-100">
-                            {(allSettings as any[]).map((s) => (
-                                <div key={s._id} className="flex items-center justify-between py-3 gap-4">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center text-white text-sm font-black flex-shrink-0">
-                                            {s.companyName?.[0] ?? "?"}
+                            {companies.map((s: any) => {
+                                const s_stats = stats?.[s.userId] ?? { projects: 0, invoices: 0, clients: 0 };
+                                return (
+                                    <div key={s._id} className="py-4 flex items-start justify-between gap-4">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-9 h-9 rounded-xl bg-sky-500 flex items-center justify-center text-white text-sm font-black flex-shrink-0">
+                                                {s.companyName?.[0] ?? "?"}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-semibold text-zinc-900 truncate">{s.companyName}</p>
+                                                <p className="text-xs text-zinc-400 truncate">{s.contactEmail}</p>
+                                                <p className="text-xs text-zinc-300 mt-0.5">Joined {formatDate(s._creationTime)}</p>
+                                            </div>
                                         </div>
-                                        <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-zinc-900 truncate">{s.companyName}</p>
-                                            <p className="text-xs text-zinc-400 truncate">{s.contactEmail}</p>
+                                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${(s.companyNameChangeCount ?? 0) >= 1 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
+                                                {s.companyNameChangeCount ?? 0} rename{(s.companyNameChangeCount ?? 0) !== 1 ? "s" : ""}
+                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <StatPill icon={FolderKanban} value={s_stats.projects} label="projects" />
+                                                <StatPill icon={FileText} value={s_stats.invoices} label="invoices" />
+                                                <StatPill icon={Users} value={s_stats.clients} label="clients" />
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 flex-shrink-0 text-right">
-                                        <div>
-                                            <p className="text-xs text-zinc-500">{s.phone || "—"}</p>
-                                            <p className="text-xs text-zinc-400">{s.currency || "—"}</p>
-                                        </div>
-                                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${(s.companyNameChangeCount ?? 0) >= 1 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
-                                            {s.companyNameChangeCount ?? 0} rename{(s.companyNameChangeCount ?? 0) !== 1 ? "s" : ""}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
