@@ -3,7 +3,8 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
-import { Check, X, Clock, Users, FolderKanban, FileText, Building2, Mail, Plus, Trash2 } from "lucide-react";
+import { Check, X, Clock, Users, FolderKanban, FileText, Building2, Mail, Plus, Trash2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 function formatDate(ts: number) {
     return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -79,6 +80,9 @@ export default function AdminPage() {
         <div className="min-h-screen bg-zinc-50">
             <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">
                 <div>
+                    <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-700 transition-colors mb-3">
+                        <ArrowLeft size={14} /> Dashboard
+                    </Link>
                     <h1 className="text-2xl font-bold text-zinc-900">Admin Panel</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">Manage companies and requests</p>
                 </div>
