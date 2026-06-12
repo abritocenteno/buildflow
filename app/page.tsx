@@ -8,6 +8,7 @@ import {
     Menu, X, Sparkles, ShieldCheck, Zap,
 } from "lucide-react";
 import { SignInButton } from "@/components/clerk-compat";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /* ─── data ─────────────────────────────────────────────────── */
 
@@ -85,7 +86,7 @@ export default function LandingPage() {
     const annualMonthly = Math.round(annualPrice / 12);
 
     return (
-        <div className="min-h-screen bg-white text-zinc-900 overflow-x-hidden">
+        <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white overflow-x-hidden">
 
             {/* ── NAV ───────────────────────────────────────── */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
@@ -98,6 +99,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="hidden md:flex items-center gap-3">
+                        <ThemeToggle className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all" />
                         <SignInButton mode="redirect">
                             <button className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 rounded-xl hover:bg-white/10 transition-all">
                                 Sign In
@@ -110,9 +112,12 @@ export default function LandingPage() {
                         </SignInButton>
                     </div>
 
-                    <button className="md:hidden p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all" onClick={() => setMobileMenuOpen(v => !v)}>
+                    <div className="md:hidden flex items-center gap-1">
+                        <ThemeToggle className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all" />
+                    <button className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all" onClick={() => setMobileMenuOpen(v => !v)}>
                         {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
+                    </div>
                 </div>
 
                 {mobileMenuOpen && (
@@ -197,10 +202,10 @@ export default function LandingPage() {
 
 
             {/* ── TRUST STRIP ───────────────────────────────── */}
-            <div className="bg-white border-y border-zinc-100 py-5">
+            <div className="bg-white dark:bg-zinc-900 border-y border-zinc-100 dark:border-zinc-800 py-5">
                 <div className="max-w-4xl mx-auto px-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
                     {["Digital sign-off workflow", "AI-powered PO extraction", "Professional PDF invoices", "No per-seat fees"].map(item => (
-                        <span key={item} className="flex items-center gap-2 text-sm text-zinc-500 font-medium">
+                        <span key={item} className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 font-medium">
                             <Check size={13} className="text-sky-500" strokeWidth={2.5} /> {item}
                         </span>
                     ))}
@@ -208,14 +213,14 @@ export default function LandingPage() {
             </div>
 
             {/* ── FEATURES ──────────────────────────────────── */}
-            <section id="features" className="bg-white py-28">
+            <section id="features" className="bg-white dark:bg-zinc-950 py-28">
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="text-center mb-16">
                         <p className="text-xs font-black text-sky-500 uppercase tracking-widest mb-3">Everything you need</p>
-                        <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 mb-4">
+                        <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
                             One platform.<br className="sm:hidden" /> Every workflow.
                         </h2>
-                        <p className="text-lg text-zinc-500 max-w-xl mx-auto">
+                        <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto">
                             No more juggling spreadsheets, WhatsApp threads, and separate invoicing tools.
                         </p>
                     </div>
@@ -225,13 +230,13 @@ export default function LandingPage() {
                             const a = accentMap[accent] ?? accentMap["sky"];
                             return (
                                 <div key={title}
-                                    className="group relative bg-white rounded-2xl p-6 border border-zinc-100 hover:border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-default"
+                                    className="group relative bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-lg dark:hover:shadow-zinc-900 transition-all duration-300 cursor-default"
                                 >
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${a.bg} transition-all group-hover:scale-110 duration-300`}>
                                         <Icon size={20} className={a.icon} />
                                     </div>
-                                    <h3 className="font-bold text-zinc-900 mb-2 text-sm">{title}</h3>
-                                    <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
+                                    <h3 className="font-bold text-zinc-900 dark:text-white mb-2 text-sm">{title}</h3>
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">{desc}</p>
                                 </div>
                             );
                         })}
@@ -335,16 +340,16 @@ export default function LandingPage() {
             </section>
 
             {/* ── CTA ───────────────────────────────────────── */}
-            <section className="bg-white py-28">
+            <section className="bg-white dark:bg-zinc-900 py-28">
                 <div className="max-w-3xl mx-auto px-6 text-center">
-                    <div className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 text-xs font-bold px-3.5 py-1.5 rounded-full mb-6 border border-sky-100 tracking-wide">
+                    <div className="inline-flex items-center gap-2 bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-300 text-xs font-bold px-3.5 py-1.5 rounded-full mb-6 border border-sky-100 dark:border-sky-500/20 tracking-wide">
                         <Sparkles size={12} />
                         JOIN THE WAITLIST
                     </div>
-                    <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 mb-4">
+                    <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
                         Ready to bring order<br />to your jobs?
                     </h2>
-                    <p className="text-xl text-zinc-500 mb-10">
+                    <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-10">
                         Join contractors who use BuildFlow to quote faster,<br className="hidden sm:block" /> bill smarter, and grow their business.
                     </p>
                     <SignInButton mode="redirect">
