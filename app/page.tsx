@@ -127,16 +127,16 @@ export default function LandingPage() {
             </nav>
 
             {/* ── HERO ──────────────────────────────────────── */}
-            <section className="relative bg-zinc-950 pt-40 pb-0 overflow-hidden">
-                {/* radial sky glow */}
-                <div className="pointer-events-none absolute inset-0"
-                    style={{ background: "radial-gradient(ellipse 90% 55% at 50% -5%, rgba(14,165,233,0.22) 0%, transparent 65%)" }} />
-                {/* dot grid */}
-                <div className="pointer-events-none absolute inset-0 opacity-[0.35]"
-                    style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
-                {/* bottom fade to white */}
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40"
-                    style={{ background: "linear-gradient(to bottom, transparent, #09090b)" }} />
+            <section className="relative bg-zinc-950 pt-40 pb-16">
+                {/* background: overflow-hidden scoped here so cards aren't clipped */}
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    {/* radial sky glow */}
+                    <div className="absolute inset-0"
+                        style={{ background: "radial-gradient(ellipse 90% 55% at 50% -5%, rgba(14,165,233,0.22) 0%, transparent 65%)" }} />
+                    {/* dot grid */}
+                    <div className="absolute inset-0 opacity-[0.35]"
+                        style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+                </div>
 
                 <div className="relative max-w-5xl mx-auto px-6 text-center">
                     {/* badge */}
@@ -174,9 +174,9 @@ export default function LandingPage() {
                     </div>
                 </div>
 
-                {/* Highlight cards — sit on the hero/white boundary */}
-                <div className="relative max-w-5xl mx-auto px-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 translate-y-12">
+                {/* Highlight cards */}
+                <div className="relative max-w-5xl mx-auto px-6 mt-16">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {highlights.map(({ icon: Icon, title, desc, color }) => {
                             const a = highlightAccent[color];
                             return (
@@ -195,8 +195,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ── SPACER (for cards overhang) ───────────────── */}
-            <div className="bg-white h-20" />
 
             {/* ── TRUST STRIP ───────────────────────────────── */}
             <div className="bg-white border-y border-zinc-100 py-5">
