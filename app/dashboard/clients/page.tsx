@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Plus, Search, ChevronRight, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ExportMenu from "@/components/ExportMenu";
+import { clientColumns } from "@/lib/export-columns";
 
 export default function ClientsPage() {
     const clients = useQuery(api.clients.list) ?? [];
@@ -23,9 +25,12 @@ export default function ClientsPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Clients</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{clients.length} clients</p>
                 </div>
-                <Link href="/dashboard/clients/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-                    <Plus size={16} /> New Client
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={filtered} columns={clientColumns} filename="clients" sheetName="Clients" />
+                    <Link href="/dashboard/clients/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        <Plus size={16} /> New Client
+                    </Link>
+                </div>
             </div>
 
             <div className="relative">

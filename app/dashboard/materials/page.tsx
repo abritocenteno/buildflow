@@ -5,9 +5,12 @@ import { api } from "@/convex/_generated/api";
 import { formatCurrency, cn } from "@/lib/utils";
 import Link from "next/link";
 import { Plus, Package, AlertTriangle } from "lucide-react";
+import ExportMenu from "@/components/ExportMenu";
+import { materialColumns } from "@/lib/export-columns";
 
 export default function MaterialsPage() {
     const materials = useQuery(api.materials.list) ?? [];
+    const settings = useQuery(api.settings.get);
 
     const lowStock = materials.filter((m: any) => m.reorderThreshold && m.quantity <= m.reorderThreshold);
 
@@ -18,9 +21,12 @@ export default function MaterialsPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Materials</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{materials.length} items{lowStock.length > 0 ? ` · ${lowStock.length} low stock` : ""}</p>
                 </div>
-                <Link href="/dashboard/materials/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-                    <Plus size={16} /> Add Material
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={materials} columns={materialColumns} filename="materials" sheetName="Materials" currency={settings?.currency} />
+                    <Link href="/dashboard/materials/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        <Plus size={16} /> Add Material
+                    </Link>
+                </div>
             </div>
 
             {lowStock.length > 0 && (

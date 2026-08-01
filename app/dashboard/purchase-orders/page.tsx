@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { useState } from "react";
+import ExportMenu from "@/components/ExportMenu";
+import { purchaseOrderColumns } from "@/lib/export-columns";
 
 const STATUS_STYLES: Record<string, string> = {
     received:     "bg-blue-50 text-blue-700 border border-blue-100",
@@ -32,6 +34,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default function PurchaseOrdersPage() {
     const router = useRouter();
     const pos = useQuery(api.purchaseOrders.list) ?? [];
+    const settings = useQuery(api.settings.get);
     const deletePo = useMutation(api.purchaseOrders.remove);
 
     const [filter, setFilter] = useState("all");
@@ -56,13 +59,16 @@ export default function PurchaseOrdersPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Purchase Orders</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{pos.length} order{pos.length !== 1 ? "s" : ""}</p>
                 </div>
-                <Link
-                    href="/dashboard/purchase-orders/new"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20"
-                >
-                    <Plus size={16} />
-                    New PO
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={filtered} columns={purchaseOrderColumns} filename="purchase-orders" sheetName="Purchase Orders" currency={settings?.currency} />
+                    <Link
+                        href="/dashboard/purchase-orders/new"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-sky-500/20"
+                    >
+                        <Plus size={16} />
+                        New PO
+                    </Link>
+                </div>
             </div>
 
             {/* Stats */}

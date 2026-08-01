@@ -1,6 +1,6 @@
 "use client";
 
-import { use, Suspense, useState, useRef, useEffect } from "react";
+import { use, Suspense, useState, useEffect } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -23,8 +23,7 @@ import {
     Receipt,
 } from "lucide-react";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
-import jsPDF from "jspdf";
-import { toPng } from "html-to-image";
+import { buildInvoicePdf, buildSignoffPdf, invoiceFileName, pdfToBase64 } from "@/lib/pdf/invoice";
 
 const STATUS_BADGE: Record<string, string> = {
     pending: "bg-amber-50 text-amber-700 border border-amber-100",
@@ -38,131 +37,10 @@ const TYPE_BADGE: Record<string, string> = {
     deposit: "bg-purple-50 text-purple-700 border border-purple-100",
 };
 
-async function buildSignoffPdf(signoff: any, projectTitle: string, companyName: string): Promise<string> {
-    const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4", compress: true });
-    const margin = 20;
-    const pageWidth = 210;
-    let y = margin;
-
-    pdf.setFillColor(14, 165, 233);
-    pdf.rect(0, 0, pageWidth, 2, "F");
-
-    pdf.setFontSize(22);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(24, 24, 27);
-    pdf.text("Work Sign-Off", margin, y + 8);
-    y += 18;
-
-    pdf.setFontSize(10);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(113, 113, 122);
-    pdf.text(companyName, margin, y);
-    y += 10;
-
-    pdf.setDrawColor(228, 228, 231);
-    pdf.line(margin, y, pageWidth - margin, y);
-    y += 10;
-
-    const field = (label: string, value: string) => {
-        if (!value) return;
-        pdf.setFontSize(8);
-        pdf.setFont("helvetica", "bold");
-        pdf.setTextColor(161, 161, 170);
-        pdf.text(label.toUpperCase(), margin, y);
-        y += 5;
-        pdf.setFontSize(11);
-        pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(24, 24, 27);
-        const lines = pdf.splitTextToSize(value, pageWidth - margin * 2);
-        pdf.text(lines, margin, y);
-        y += lines.length * 6 + 6;
-    };
-
-    field("Project", projectTitle || "—");
-    field("Signed by", signoff.supervisorName || "—");
-    if (signoff.completedAt) {
-        field("Date signed", new Date(signoff.completedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }));
-    }
-    if (signoff.checkIn || signoff.checkOut) {
-        const times = [signoff.checkIn && `Check-in: ${signoff.checkIn}`, signoff.checkOut && `Check-out: ${signoff.checkOut}`].filter(Boolean).join("   ·   ");
-        field("Times", times as string);
-    }
-    if (signoff.workDescription) field("Work Description", signoff.workDescription);
-
-    if (signoff.signatureData) {
-        y += 4;
-        pdf.setFontSize(8);
-        pdf.setFont("helvetica", "bold");
-        pdf.setTextColor(161, 161, 170);
-        pdf.text("SIGNATURE", margin, y);
-        y += 5;
-        try {
-            pdf.addImage(signoff.signatureData, "PNG", margin, y, 70, 28);
-        } catch { /* skip if image fails */ }
-    }
-
-    pdf.setFontSize(8);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(161, 161, 170);
-    pdf.text(`© ${new Date().getFullYear()} ${companyName}`, margin, 285);
-    pdf.text("Work Sign-Off Document", pageWidth - margin, 285, { align: "right" });
-
-    return pdf.output("datauristring").split(",")[1];
-}
-
-async function buildPdf(el: HTMLElement, compress = false): Promise<jsPDF> {
-    const A4W = 210, A4H = 297;
-    const dataUrl = await toPng(el, {
-        quality: compress ? 0.8 : 1.0,
-        pixelRatio: compress ? 1.5 : 2,
-        backgroundColor: "#ffffff",
-        style: { transform: "scale(1)", transformOrigin: "top left", width: "900px", margin: "0" },
-    });
-
-    const img = await new Promise<HTMLImageElement>((res, rej) => {
-        const i = new Image();
-        i.onload = () => res(i);
-        i.onerror = rej;
-        i.src = dataUrl;
-    });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx2d = canvas.getContext("2d")!;
-    ctx2d.fillStyle = "#ffffff";
-    ctx2d.fillRect(0, 0, canvas.width, canvas.height);
-    ctx2d.drawImage(img, 0, 0);
-
-    const totalHMm = (img.height / img.width) * A4W;
-    const pageHPx = Math.round((A4H / totalHMm) * img.height);
-
-    const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4", compress });
-    const slice = document.createElement("canvas");
-    slice.width = img.width;
-
-    let pos = 0;
-    while (pos < img.height) {
-        const h = Math.min(pageHPx, img.height - pos);
-        const hMm = (h / img.width) * A4W;
-        slice.height = h;
-        const sc = slice.getContext("2d")!;
-        sc.fillStyle = "#ffffff";
-        sc.fillRect(0, 0, img.width, h);
-        sc.drawImage(canvas, 0, pos, img.width, h, 0, 0, img.width, h);
-        if (pos > 0) pdf.addPage();
-        pdf.addImage(slice.toDataURL("image/png"), "PNG", 0, 0, A4W, hMm, undefined, compress ? "FAST" : "NONE");
-        pos += h;
-    }
-
-    return pdf;
-}
-
 const PAYMENT_METHODS = ["Bank Transfer", "Cash", "Card", "Cheque", "Other"];
 
 function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     const router = useRouter();
-    const invoiceRef = useRef<HTMLDivElement>(null);
 
     const invoice = useQuery(api.invoices.get, { id });
     const settings = useQuery(api.settings.get);
@@ -221,11 +99,11 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     };
 
     const handleDownload = async () => {
-        if (!invoiceRef.current || !invoice) return;
+        if (!invoice) return;
         setIsDownloading(true);
         try {
-            const pdf = await buildPdf(invoiceRef.current);
-            pdf.save(`${invoice.invoiceNumber}.pdf`);
+            const pdf = buildInvoicePdf(invoice, settings);
+            pdf.save(invoiceFileName(invoice));
         } catch (err: any) {
             alert(`PDF failed: ${err.message}`);
         } finally {
@@ -234,20 +112,21 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
     };
 
     const handleSendEmail = async (signoffIdsToInclude: string[]) => {
-        if (!invoiceRef.current || !invoice) return;
+        if (!invoice) return;
         const client = (invoice as any).client;
         if (!client?.email) { alert("Client has no email address."); return; }
 
         setIsSending(true);
         try {
-            const pdf = await buildPdf(invoiceRef.current, true);
-            const base64 = pdf.output("datauristring").split(",")[1];
+            const base64 = pdfToBase64(buildInvoicePdf(invoice, settings));
 
             const signoffAttachments = [];
             for (const sfId of signoffIdsToInclude) {
                 const sf = completedSignoffs.find((s: any) => s._id === sfId);
                 if (!sf) continue;
-                const sfBase64 = await buildSignoffPdf(sf, (invoice as any).project?.title || "", settings?.companyName || "Arcocen");
+                const sfBase64 = pdfToBase64(
+                    buildSignoffPdf(sf, (invoice as any).project?.title || "", settings?.companyName || "Arcocen")
+                );
                 const label = sf.supervisorName ? `SignOff_${sf.supervisorName.replace(/\s+/g, "_")}` : "SignOff";
                 signoffAttachments.push({ filename: `${label}.pdf`, content: sfBase64 });
             }
@@ -531,7 +410,6 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
 
             {/* Invoice canvas */}
             <div
-                ref={invoiceRef}
                 className="bg-white border border-zinc-200 rounded-2xl p-8 md:p-12 shadow-sm space-y-10"
                 style={{ color: "#18181b", backgroundColor: "#ffffff" }}
             >

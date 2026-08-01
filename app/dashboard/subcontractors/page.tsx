@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Plus, Search, ChevronRight, HardHat, AlertTriangle } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
+import ExportMenu from "@/components/ExportMenu";
+import { subcontractorColumns } from "@/lib/export-columns";
 
 const TRADE_COLORS: Record<string, string> = {
     electrical: "bg-yellow-100 text-yellow-700",
@@ -38,9 +40,12 @@ export default function SubcontractorsPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Subcontractors</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{subcontractors.length} subcontractors</p>
                 </div>
-                <Link href="/dashboard/subcontractors/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-                    <Plus size={16} /> Add Subcontractor
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={filtered} columns={subcontractorColumns} filename="subcontractors" sheetName="Subcontractors" />
+                    <Link href="/dashboard/subcontractors/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        <Plus size={16} /> Add Subcontractor
+                    </Link>
+                </div>
             </div>
 
             <div className="relative">

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
+import ExportMenu from "@/components/ExportMenu";
+import { projectColumns } from "@/lib/export-columns";
 
 const STATUSES = [
     { key: "planning", label: "Planning", color: "bg-zinc-100 text-zinc-600 border-zinc-200" },
@@ -91,6 +93,7 @@ function ProjectCard({ project, onDelete }: { project: any; onDelete?: () => voi
 
 export default function ProjectsPage() {
     const projects = useQuery(api.projects.list) ?? [];
+    const settings = useQuery(api.settings.get);
     const updateStatus = useMutation(api.projects.updateStatus);
     const deleteProject = useMutation(api.projects.remove);
     const router = useRouter();
@@ -129,6 +132,7 @@ export default function ProjectsPage() {
                             <List size={16} />
                         </button>
                     </div>
+                    <ExportMenu rows={filtered} columns={projectColumns} filename="projects" sheetName="Projects" currency={settings?.currency} />
                     <Link
                         href="/dashboard/projects/new"
                         className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm shadow-sky-500/20"

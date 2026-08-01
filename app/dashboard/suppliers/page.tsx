@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Plus, Search, ChevronRight, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ExportMenu from "@/components/ExportMenu";
+import { supplierColumns } from "@/lib/export-columns";
 
 export default function SuppliersPage() {
     const suppliers = useQuery(api.suppliers.list) ?? [];
@@ -23,9 +25,12 @@ export default function SuppliersPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Suppliers</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{suppliers.length} suppliers</p>
                 </div>
-                <Link href="/dashboard/suppliers/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-                    <Plus size={16} /> Add Supplier
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={filtered} columns={supplierColumns} filename="suppliers" sheetName="Suppliers" />
+                    <Link href="/dashboard/suppliers/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        <Plus size={16} /> Add Supplier
+                    </Link>
+                </div>
             </div>
 
             <div className="relative">

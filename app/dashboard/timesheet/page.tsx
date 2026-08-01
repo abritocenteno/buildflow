@@ -6,12 +6,15 @@ import { formatDate, cn } from "@/lib/utils";
 import { useState } from "react";
 import { Plus, Clock, Trash2 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import ExportMenu from "@/components/ExportMenu";
+import { timeEntryColumns } from "@/lib/export-columns";
 
 export default function TimesheetPage() {
     const entries = useQuery(api.timeEntries.list) ?? [];
     const projects = useQuery(api.projects.list) ?? [];
     const createEntry = useMutation(api.timeEntries.create);
     const deleteEntry = useMutation(api.timeEntries.remove);
+    const settings = useQuery(api.settings.get);
 
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({
@@ -61,12 +64,15 @@ export default function TimesheetPage() {
                         {Math.floor(totalHours / 60)}h {totalHours % 60}m total logged
                     </p>
                 </div>
-                <button
-                    onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                >
-                    <Plus size={16} /> Log Time
-                </button>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={entries} columns={timeEntryColumns} filename="time-entries" sheetName="Time Entries" currency={settings?.currency} />
+                    <button
+                        onClick={() => setShowForm(true)}
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
+                    >
+                        <Plus size={16} /> Log Time
+                    </button>
+                </div>
             </div>
 
             {showForm && (

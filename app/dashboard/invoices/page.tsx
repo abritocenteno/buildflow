@@ -7,6 +7,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { Plus, ChevronRight, FileText, Trash2 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import ExportMenu from "@/components/ExportMenu";
+import { InvoicePdfButton, BulkInvoicePdfMenu } from "@/components/InvoicePdfDownload";
+import { invoiceColumns } from "@/lib/export-columns";
 
 const STATUS_COLORS: Record<string, string> = {
     pending: "bg-amber-100 text-amber-700",
@@ -16,6 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function InvoicesPage() {
     const invoices = useQuery(api.invoices.list) ?? [];
+    const settings = useQuery(api.settings.get);
     const deleteInvoice = useMutation(api.invoices.remove);
     const [filter, setFilter] = useState("all");
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -40,13 +44,23 @@ export default function InvoicesPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Invoices</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{invoices.length} invoices</p>
                 </div>
-                <Link
-                    href="/dashboard/invoices/new"
-                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
-                >
-                    <Plus size={16} />
-                    New Invoice
-                </Link>
+                <div className="flex items-center gap-2">
+                    <BulkInvoicePdfMenu invoices={filtered} settings={settings} />
+                    <ExportMenu
+                        rows={filtered}
+                        columns={invoiceColumns}
+                        filename="invoices"
+                        sheetName="Invoices"
+                        currency={settings?.currency}
+                    />
+                    <Link
+                        href="/dashboard/invoices/new"
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                    >
+                        <Plus size={16} />
+                        New Invoice
+                    </Link>
+                </div>
             </div>
 
             {/* Summary */}
@@ -123,6 +137,7 @@ export default function InvoicesPage() {
                                             </>
                                         ) : (
                                             <>
+                                                <InvoicePdfButton invoice={inv} settings={settings} />
                                                 <button
                                                     onClick={() => setConfirmDeleteId(inv._id)}
                                                     className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 text-zinc-300 hover:bg-red-50 hover:text-red-500 transition-all"

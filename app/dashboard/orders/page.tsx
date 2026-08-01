@@ -5,6 +5,8 @@ import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import Link from "next/link";
 import { Plus, ChevronRight, ShoppingBag } from "lucide-react";
+import ExportMenu from "@/components/ExportMenu";
+import { orderColumns } from "@/lib/export-columns";
 
 const STATUS_COLORS: Record<string, string> = {
     pending: "bg-amber-100 text-amber-700",
@@ -14,6 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function OrdersPage() {
     const orders = useQuery(api.orders.list) ?? [];
+    const settings = useQuery(api.settings.get);
 
     return (
         <div className="space-y-6">
@@ -22,9 +25,12 @@ export default function OrdersPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Purchase Orders</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{orders.length} orders</p>
                 </div>
-                <Link href="/dashboard/orders/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-                    <Plus size={16} /> New Order
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={orders} columns={orderColumns} filename="supplier-orders" sheetName="Orders" currency={settings?.currency} />
+                    <Link href="/dashboard/orders/new" className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                        <Plus size={16} /> New Order
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">

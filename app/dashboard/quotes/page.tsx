@@ -5,6 +5,8 @@ import { api } from "@/convex/_generated/api";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import Link from "next/link";
 import { Plus, ChevronRight, FileText } from "lucide-react";
+import ExportMenu from "@/components/ExportMenu";
+import { quoteColumns } from "@/lib/export-columns";
 
 const STATUS_COLORS: Record<string, string> = {
     draft: "bg-zinc-100 text-zinc-600",
@@ -16,6 +18,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function QuotesPage() {
     const quotes = useQuery(api.quotes.list) ?? [];
+    const settings = useQuery(api.settings.get);
 
     const totalValue = quotes.reduce((sum: number, q: any) => {
         const items = q.items ?? [];
@@ -33,13 +36,16 @@ export default function QuotesPage() {
                     <h1 className="text-2xl font-bold text-zinc-900">Quotes</h1>
                     <p className="text-sm text-zinc-500 mt-0.5">{quotes.length} quotes · {formatCurrency(totalValue)} total value</p>
                 </div>
-                <Link
-                    href="/dashboard/quotes/new"
-                    className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
-                >
-                    <Plus size={16} />
-                    New Quote
-                </Link>
+                <div className="flex items-center gap-2">
+                    <ExportMenu rows={quotes} columns={quoteColumns} filename="quotes" sheetName="Quotes" currency={settings?.currency} />
+                    <Link
+                        href="/dashboard/quotes/new"
+                        className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                    >
+                        <Plus size={16} />
+                        New Quote
+                    </Link>
+                </div>
             </div>
 
             {/* Status summary */}
