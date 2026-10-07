@@ -22,7 +22,7 @@ import {
     Trash2,
     Receipt,
 } from "lucide-react";
-import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { cn, formatCurrency, formatDate, formatTimestamp } from "@/lib/utils";
 import { buildInvoicePdf, buildSignoffPdf, invoiceFileName, pdfToBase64 } from "@/lib/pdf/invoice";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -341,7 +341,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                         <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-medium text-emerald-700">
                                 <CheckCircle2 size={15} />
-                                Paid{(invoice as any).paidAt ? ` · ${formatDate((invoice as any).paidAt)}` : ""}
+                                Paid{(invoice as any).paidAt ? ` · ${formatTimestamp((invoice as any).paidAt)}` : ""}
                             </div>
                             <button onClick={handleMarkUnpaid} title="Revert to unpaid" className="p-2 bg-white border border-zinc-200 rounded-xl text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50 transition-all">
                                 <RotateCcw size={15} />
@@ -529,7 +529,7 @@ function InvoiceDetail({ id }: { id: Id<"invoices"> }) {
                                 {(invoice as any).paidAt && (
                                     <div>
                                         <p className="text-xs text-zinc-400 mb-0.5">Paid On</p>
-                                        <p className="font-bold text-emerald-600">{formatDate((invoice as any).paidAt)}</p>
+                                        <p className="font-bold text-emerald-600">{formatTimestamp((invoice as any).paidAt)}</p>
                                     </div>
                                 )}
                             </div>

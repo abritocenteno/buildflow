@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { formatDay } from "../lib/dates";
 
 async function getUserId(ctx: any) {
     const identity = await ctx.auth.getUserIdentity();
@@ -83,7 +84,7 @@ export const importToInvoice = mutation({
                 return {
                     name: e.workerName ? `Labor — ${e.workerName}` : "Labor",
                     description: e.description || "Billable time",
-                    remark: new Date(e.date).toLocaleDateString("en-IE"),
+                    remark: formatDay(e.date, { day: "2-digit", month: "2-digit", year: "numeric" }),
                     amount: Math.max(1, Math.round(hours)),
                     unitPrice: e.hourlyRate ?? 0,
                 };

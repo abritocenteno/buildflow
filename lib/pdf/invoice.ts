@@ -7,6 +7,7 @@
  */
 
 import jsPDF from "jspdf";
+import { formatDay, formatInstantDate } from "@/lib/dates";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -107,13 +108,6 @@ function currencyFormatter(currency = "EUR") {
     return (n: number) => fmt.format(n || 0).replace(/[  ]/g, " ");
 }
 
-function formatDay(ts: number): string {
-    return new Date(ts).toLocaleDateString("en-IE", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    });
-}
 
 /** Small uppercase section label, e.g. BILLED TO. */
 function sectionLabel(d: Doc, label: string, x: number, y: number, align?: "right") {
@@ -300,7 +294,7 @@ export function buildInvoicePdf(invoice: any, settings?: InvoicePdfSettings | nu
         d.font(7, "normal", C.zinc400);
         d.text("Paid On", payX, py);
         d.font(9, "bold", C.emerald);
-        d.text(formatDay(invoice.paidAt), payX, py + 4);
+        d.text(formatInstantDate(invoice.paidAt), payX, py + 4);
         py += 9;
     }
 

@@ -1,4 +1,5 @@
 import { query } from "./_generated/server";
+import { resolveTimeZone, yearMonthInZone } from "../lib/dates";
 
 async function getUserId(ctx: any) {
     const identity = await ctx.auth.getUserIdentity();
@@ -26,18 +27,23 @@ export const overview = query({
         const pendingQuotes = quotes.filter((q: any) => ["draft", "sent"].includes(q.status)).length;
         const approvedQuotes = quotes.filter((q: any) => q.status === "approved").length;
 
-        // Monthly revenue (last 12 months)
-        const now = Date.now();
+        // Monthly revenue (last 12 months), bucketed by the company's time zone
+        const settings = await ctx.db.query("settings").withIndex("by_user", (q: any) => q.eq("userId", userId)).unique();
+        const timeZone = resolveTimeZone(settings?.timeZone);
+        const current = yearMonthInZone(Date.now(), timeZone);
+        const revenueByMonth = new Map<string, number>();
+        for (const inv of invoices as any[]) {
+            if (inv.status !== "paid" || !inv.paidAt) continue;
+            const { year, month } = yearMonthInZone(inv.paidAt, timeZone);
+            const key = `${year}-${month}`;
+            revenueByMonth.set(key, (revenueByMonth.get(key) ?? 0) + inv.amount);
+        }
         const monthlyRevenue: { month: string; revenue: number }[] = [];
         for (let i = 11; i >= 0; i--) {
-            const d = new Date(now);
-            d.setMonth(d.getMonth() - i);
-            const label = d.toLocaleString("default", { month: "short", year: "2-digit" });
-            const monthStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
-            const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0).getTime();
-            const revenue = invoices
-                .filter((inv: any) => inv.status === "paid" && inv.paidAt && inv.paidAt >= monthStart && inv.paidAt <= monthEnd)
-                .reduce((sum: number, inv: any) => sum + inv.amount, 0);
+            // Date.UTC normalises negative months into the previous year.
+            const d = new Date(Date.UTC(current.year, current.month - i, 1));
+            const label = d.toLocaleString("en-IE", { month: "short", year: "2-digit", timeZone: "UTC" });
+            const revenue = revenueByMonth.get(`${d.getUTCFullYear()}-${d.getUTCMonth()}`) ?? 0;
             monthlyRevenue.push({ month: label, revenue });
         }
 

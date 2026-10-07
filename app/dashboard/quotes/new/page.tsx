@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { formatCurrency } from "@/lib/utils";
+import { todayISO } from "@/lib/dates";
 
 type LineItem = {
     category: string;
@@ -27,7 +28,7 @@ export default function NewQuotePage() {
 
     const [form, setForm] = useState({
         clientId: "",
-        date: new Date().toISOString().split("T")[0],
+        date: todayISO(),
         expiryDate: "",
         notes: "",
         internalNotes: "",

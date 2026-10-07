@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { isValidTimeZone } from "../lib/dates";
 
 async function assertAdmin(ctx: any) {
     const identity = await ctx.auth.getUserIdentity();
@@ -39,6 +40,7 @@ export const upsert = mutation({
         logoStorageId: v.optional(v.id("_storage")),
         language: v.optional(v.string()),
         currency: v.optional(v.string()),
+        timeZone: v.optional(v.string()),
         emailSenderName: v.optional(v.string()),
         invoiceEmailSubject: v.optional(v.string()),
         invoiceEmailIntro: v.optional(v.string()),
@@ -51,6 +53,9 @@ export const upsert = mutation({
     },
     handler: async (ctx, args) => {
         const userId = await getUserId(ctx);
+        if (args.timeZone !== undefined && !isValidTimeZone(args.timeZone)) {
+            throw new Error("Unknown time zone");
+        }
         const existing = await ctx.db.query("settings").withIndex("by_user", (q: any) => q.eq("userId", userId)).unique();
         if (existing) {
             const nameChanged = args.companyName !== existing.companyName;
@@ -64,6 +69,20 @@ export const upsert = mutation({
             });
         } else {
             await ctx.db.insert("settings", { ...args, userId, companyNameChangeCount: 0 });
+        }
+    },
+});
+
+// Called by the dashboard with the browser's zone so existing accounts pick one
+// up without visiting settings. Never overrides a zone the user chose.
+export const setTimeZoneIfMissing = mutation({
+    args: { timeZone: v.string() },
+    handler: async (ctx, { timeZone }) => {
+        const userId = await getUserId(ctx);
+        if (!isValidTimeZone(timeZone)) return;
+        const existing = await ctx.db.query("settings").withIndex("by_user", (q: any) => q.eq("userId", userId)).unique();
+        if (existing && !existing.timeZone) {
+            await ctx.db.patch(existing._id, { timeZone });
         }
     },
 });

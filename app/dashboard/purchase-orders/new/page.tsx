@@ -7,6 +7,7 @@ import Link from "next/link";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ArrowLeft, Save, Hash, Receipt, Upload, Loader2, FileText, X } from "lucide-react";
+import { todayISO } from "@/lib/dates";
 
 const inputCls = "w-full px-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all bg-zinc-50";
 const labelCls = "block text-xs font-semibold text-zinc-600 mb-1.5";
@@ -26,7 +27,7 @@ export default function NewPurchaseOrderPage() {
         poNumber: "",
         description: "",
         amount: "",
-        receivedAt: new Date().toISOString().split("T")[0],
+        receivedAt: todayISO(),
         expiresAt: "",
         notes: "",
         internalNotes: "",

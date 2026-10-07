@@ -12,7 +12,7 @@ import {
     ChevronRight,
     Loader2,
 } from "lucide-react";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import { useState } from "react";
 import ExportMenu from "@/components/ExportMenu";
 import { purchaseOrderColumns } from "@/lib/export-columns";
@@ -139,7 +139,7 @@ export default function PurchaseOrdersPage() {
                                     <td className="px-5 py-3.5">
                                         <p className="font-bold text-sm text-zinc-900 font-mono">{po.poNumber}</p>
                                         <p className="text-xs text-zinc-400 mt-0.5">
-                                            {new Date(po.receivedAt).toLocaleDateString()}
+                                            {formatDate(po.receivedAt)}
                                         </p>
                                     </td>
                                     <td className="px-5 py-3.5 text-sm text-zinc-700">{po.client?.name ?? "—"}</td>

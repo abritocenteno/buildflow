@@ -21,6 +21,7 @@ import {
     Hash,
 } from "lucide-react";
 import { cn, formatCurrency, getCurrencySymbol } from "@/lib/utils";
+import { todayISO } from "@/lib/dates";
 
 const INVOICE_TYPES = ["progress", "final", "deposit"] as const;
 const PAYMENT_METHODS = ["Bank Transfer", "Cash", "Card", "Cheque", "Other"];
@@ -44,7 +45,7 @@ function CreateInvoiceForm() {
         purchaseOrderNumber: "",
         purchaseOrderId: "" as Id<"purchaseOrders"> | "",
         invoiceType: "progress" as string,
-        date: new Date().toISOString().split("T")[0],
+        date: todayISO(),
         dueDate: "",
         paymentMethod: "",
         taxRate: 0,

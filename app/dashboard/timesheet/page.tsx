@@ -8,6 +8,7 @@ import { Plus, Clock, Trash2 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import ExportMenu from "@/components/ExportMenu";
 import { timeEntryColumns } from "@/lib/export-columns";
+import { todayISO } from "@/lib/dates";
 
 export default function TimesheetPage() {
     const entries = useQuery(api.timeEntries.list) ?? [];
@@ -19,7 +20,7 @@ export default function TimesheetPage() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({
         projectId: "",
-        date: new Date().toISOString().split("T")[0],
+        date: todayISO(),
         hours: "",
         minutes: "",
         description: "",
@@ -46,7 +47,7 @@ export default function TimesheetPage() {
                 hourlyRate: form.hourlyRate ? parseFloat(form.hourlyRate) : undefined,
                 workerName: form.workerName || undefined,
             });
-            setForm({ projectId: "", date: new Date().toISOString().split("T")[0], hours: "", minutes: "", description: "", billable: true, hourlyRate: "", workerName: "" });
+            setForm({ projectId: "", date: todayISO(), hours: "", minutes: "", description: "", billable: true, hourlyRate: "", workerName: "" });
             setShowForm(false);
         } finally {
             setSaving(false);

@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useRef, useEffect } from "react";
-import { formatDate } from "@/lib/utils";
+import { formatTimestamp } from "@/lib/utils";
 
 export function NotificationBell() {
     const notifications = useQuery(api.notifications.list) ?? [];
@@ -62,7 +62,7 @@ export function NotificationBell() {
                             >
                                 <p className="text-sm font-medium text-zinc-900">{n.title}</p>
                                 <p className="text-xs text-zinc-500 mt-0.5">{n.message}</p>
-                                <p className="text-xs text-zinc-400 mt-1">{formatDate(n.createdAt)}</p>
+                                <p className="text-xs text-zinc-400 mt-1">{formatTimestamp(n.createdAt)}</p>
                             </div>
                         ))}
                     </div>

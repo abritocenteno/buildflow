@@ -4,6 +4,14 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
 import { Save, Building2, Pencil, X, Send, Clock } from "lucide-react";
+import { localTimeZone } from "@/lib/dates";
+
+/** All IANA zones the browser knows, always including the current value. */
+function timeZoneOptions(current: string): string[] {
+    if (!current) return [];
+    const zones: string[] = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
+    return zones.includes(current) ? zones : [current, ...zones];
+}
 
 export default function SettingsPage() {
     const settings = useQuery(api.settings.get);
@@ -29,6 +37,7 @@ export default function SettingsPage() {
         defaultTaxRate: "",
         bankAccounts: "",
         currency: "EUR",
+        timeZone: "", // filled client-side once settings load
         emailSenderName: "",
         invoiceEmailSubject: "",
         invoiceEmailIntro: "",
@@ -52,6 +61,7 @@ export default function SettingsPage() {
                 defaultTaxRate: settings.defaultTaxRate?.toString() ?? "",
                 bankAccounts: settings.bankAccounts ?? "",
                 currency: settings.currency ?? "EUR",
+                timeZone: settings.timeZone ?? localTimeZone(),
                 emailSenderName: settings.emailSenderName ?? "",
                 invoiceEmailSubject: settings.invoiceEmailSubject ?? "",
                 invoiceEmailIntro: settings.invoiceEmailIntro ?? "",
@@ -78,6 +88,7 @@ export default function SettingsPage() {
             defaultTaxRate: form.defaultTaxRate ? parseFloat(form.defaultTaxRate) : undefined,
             bankAccounts: form.bankAccounts || undefined,
             currency: form.currency || undefined,
+            timeZone: form.timeZone || undefined,
             emailSenderName: form.emailSenderName || undefined,
             invoiceEmailSubject: form.invoiceEmailSubject || undefined,
             invoiceEmailIntro: form.invoiceEmailIntro || undefined,
@@ -220,6 +231,15 @@ export default function SettingsPage() {
                                 <option value="GBP">GBP (£)</option>
                                 <option value="USD">USD ($)</option>
                             </select>
+                        </div>
+                        <div>
+                            <label className={labelCls}>Time Zone</label>
+                            <select className={inputCls} value={form.timeZone} onChange={(e) => set("timeZone", e.target.value)}>
+                                {timeZoneOptions(form.timeZone).map((tz) => (
+                                    <option key={tz} value={tz}>{tz.replace(/_/g, " ")}</option>
+                                ))}
+                            </select>
+                            <p className="text-xs text-zinc-400 mt-1">Used for overdue checks, reports and dates in emails.</p>
                         </div>
                         <div>
                             <label className={labelCls}>Registration Number</label>

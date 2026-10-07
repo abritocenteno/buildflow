@@ -311,6 +311,7 @@ export default defineSchema({
         logoStorageId: v.optional(v.id("_storage")),
         language: v.optional(v.string()),
         currency: v.optional(v.string()),
+        timeZone: v.optional(v.string()), // IANA zone, e.g. "America/Aruba"
         emailSenderName: v.optional(v.string()),
         // Email templates
         invoiceEmailSubject: v.optional(v.string()),

@@ -10,6 +10,7 @@ import {
     Plus, Trash2, Truck, FolderKanban,
 } from "lucide-react";
 import { cn, formatCurrency, getCurrencySymbol } from "@/lib/utils";
+import { todayISO } from "@/lib/dates";
 
 function NewOrderForm() {
     const router = useRouter();
@@ -25,7 +26,7 @@ function NewOrderForm() {
     const [form, setForm] = useState({
         supplierId: (initialSupplierId || "") as Id<"suppliers"> | "",
         projectId: "" as Id<"projects"> | "",
-        date: new Date().toISOString().split("T")[0],
+        date: todayISO(),
         items: [] as { name: string; description: string; remark: string; amount: number; unitPrice: number }[],
     });
 

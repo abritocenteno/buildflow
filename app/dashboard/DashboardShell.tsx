@@ -32,7 +32,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Authenticated, Unauthenticated, AuthLoading, useQuery, useConvexAuth } from "convex/react";
+import { localTimeZone } from "@/lib/dates";
+import { Authenticated, Unauthenticated, AuthLoading, useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 function SessionRecoveryButton() {
@@ -95,6 +96,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             router.push("/onboarding");
         }
     }, [isAuthenticated, settings]);
+
+    const setTimeZoneIfMissing = useMutation(api.settings.setTimeZoneIfMissing);
+    useEffect(() => {
+        if (settings && !settings.timeZone) {
+            setTimeZoneIfMissing({ timeZone: localTimeZone() }).catch(() => {});
+        }
+    }, [settings]);
 
     const navigation = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },

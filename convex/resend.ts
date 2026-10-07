@@ -2,6 +2,9 @@ import { v } from "convex/values";
 import { action } from "./_generated/server";
 import { Resend } from "resend";
 import { api } from "./_generated/api";
+import { formatDay, formatInstantDate, resolveTimeZone } from "../lib/dates";
+
+const LONG_DATE: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" };
 
 function replaceVars(template: string, vars: Record<string, string>): string {
     return Object.entries(vars).reduce((str, [k, v]) => str.replaceAll(`{{${k}}}`, v), template);
@@ -116,8 +119,8 @@ export const sendOverdueReminderEmail = action({
 
         const formatAmt = (n: number) => new Intl.NumberFormat("en-IE", { style: "currency", currency }).format(n);
         const dueDate = (invoice as any).dueDate
-            ? new Date((invoice as any).dueDate).toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric" })
-            : new Date((invoice as any).date + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("en-IE", { day: "numeric", month: "long", year: "numeric" });
+            ? formatDay((invoice as any).dueDate, LONG_DATE)
+            : formatDay((invoice as any).date + 30 * 24 * 60 * 60 * 1000, LONG_DATE);
 
         const overdueIntro = replaceVars(
             settings?.overdueEmailIntro || "We'd like to remind you that invoice {{invoiceNumber}} was due on {{dueDate}} and is still outstanding.",
@@ -286,7 +289,7 @@ export const sendSignoffCompletionEmail = action({
         const resend = new Resend(resendApiKey);
 
         const signedAt = signoff.completedAt
-            ? new Date(signoff.completedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+            ? formatInstantDate(signoff.completedAt, resolveTimeZone(settings?.timeZone), LONG_DATE, "en-GB")
             : "—";
 
         const workBlock = signoff.workDescription
