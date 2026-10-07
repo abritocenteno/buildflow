@@ -19,6 +19,7 @@ import type * as files from "../files.js";
 import type * as invoiceJobs from "../invoiceJobs.js";
 import type * as invoices from "../invoices.js";
 import type * as materials from "../materials.js";
+import type * as migration from "../migration.js";
 import type * as notifications from "../notifications.js";
 import type * as orders from "../orders.js";
 import type * as permits from "../permits.js";
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   invoiceJobs: typeof invoiceJobs;
   invoices: typeof invoices;
   materials: typeof materials;
+  migration: typeof migration;
   notifications: typeof notifications;
   orders: typeof orders;
   permits: typeof permits;
