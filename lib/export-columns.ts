@@ -41,7 +41,7 @@ export const invoiceColumns: Column<Row>[] = [
     { header: "Retainage %", accessor: (r) => r.retainagePercent, type: "number", width: 12 },
     { header: "PO Number", accessor: (r) => r.purchaseOrderNumber, width: 16 },
     { header: "Payment Method", accessor: (r) => r.paymentMethod, width: 16 },
-    { header: "Paid On", accessor: (r) => r.paidAt, type: "date", width: 14 },
+    { header: "Paid On", accessor: (r) => r.paidAt, type: "timestamp", width: 14 },
 ];
 
 export const quoteColumns: Column<Row>[] = [
@@ -53,8 +53,8 @@ export const quoteColumns: Column<Row>[] = [
     { header: "Line Items", accessor: (r) => r.items?.length ?? 0, type: "number", width: 11 },
     { header: "VAT %", accessor: (r) => r.taxRate, type: "number", width: 9 },
     { header: "Total", accessor: quoteTotal, type: "currency", width: 14 },
-    { header: "Sent", accessor: (r) => r.sentAt, type: "date", width: 14 },
-    { header: "Approved", accessor: (r) => r.approvedAt, type: "date", width: 14 },
+    { header: "Sent", accessor: (r) => r.sentAt, type: "timestamp", width: 14 },
+    { header: "Approved", accessor: (r) => r.approvedAt, type: "timestamp", width: 14 },
     { header: "Notes", accessor: (r) => r.notes, width: 34 },
 ];
 

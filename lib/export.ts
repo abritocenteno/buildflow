@@ -6,8 +6,13 @@
  */
 
 import { getCurrencySymbol } from "./utils";
+import { isoDayInZone, isoToDay, localTimeZone } from "./dates";
 
-export type ColumnType = "text" | "number" | "currency" | "date" | "boolean";
+/**
+ * `date` is a stored calendar day (UTC midnight, see lib/dates.ts); `timestamp`
+ * is a moment in time, exported as its day in the viewer's time zone.
+ */
+export type ColumnType = "text" | "number" | "currency" | "date" | "timestamp" | "boolean";
 
 export interface Column<T> {
     header: string;
@@ -38,9 +43,14 @@ function normalize<T>(row: T, col: Column<T>): CellValue {
             const n = typeof raw === "number" ? raw : Number(raw);
             return Number.isFinite(n) ? n : null;
         }
-        case "date": {
+        case "date":
+        case "timestamp": {
             const d = raw instanceof Date ? raw : new Date(raw as number);
-            return Number.isNaN(d.getTime()) ? null : d;
+            if (Number.isNaN(d.getTime())) return null;
+            // Normalise to a calendar day at UTC midnight so both writers read it in UTC.
+            return col.type === "timestamp"
+                ? new Date(isoToDay(isoDayInZone(d.getTime(), localTimeZone())))
+                : d;
         }
         case "boolean":
             return raw ? "Yes" : "No";
@@ -114,11 +124,8 @@ function excelCell(value: CellValue, styleId?: string): string {
     if (value === null) return `<Cell${style}/>`;
 
     if (value instanceof Date) {
-        // SpreadsheetML wants a local, timezone-free datetime.
-        const pad = (n: number) => String(n).padStart(2, "0");
-        const iso =
-            `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}` +
-            `T00:00:00.000`;
+        // SpreadsheetML wants a timezone-free datetime; dates are UTC calendar days.
+        const iso = `${value.toISOString().slice(0, 10)}T00:00:00.000`;
         return `<Cell${style}><Data ss:Type="DateTime">${iso}</Data></Cell>`;
     }
 
@@ -136,6 +143,7 @@ function styleFor(type: ColumnType | undefined): string | undefined {
         case "number":
             return "sNumber";
         case "date":
+        case "timestamp":
             return "sDate";
         default:
             return undefined;
