@@ -1,10 +1,11 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
-import { Check, X, Clock, Users, FolderKanban, FileText, Building2, Mail, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Check, X, Clock, Users, FolderKanban, FileText, Building2, Mail, Plus, Trash2, ArrowLeft, Download } from "lucide-react";
 import Link from "next/link";
+import { dateStamp, downloadBlob } from "@/lib/export";
 
 function formatDate(ts: number) {
     return new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -28,6 +29,8 @@ export default function AdminPage() {
     const resolveRequest = useMutation(api.settings.resolveNameChangeRequest);
     const addAllowedEmail = useMutation(api.settings.addAllowedEmail);
     const removeAllowedEmail = useMutation(api.settings.removeAllowedEmail);
+    const exportForCascabel = useAction(api.migration.exportForCascabel);
+    const [exporting, setExporting] = useState<string | null>(null);
     const [resolving, setResolving] = useState<string | null>(null);
     const [newEmail, setNewEmail] = useState("");
     const [addingEmail, setAddingEmail] = useState(false);
@@ -63,6 +66,23 @@ export default function AdminPage() {
             await resolveRequest({ requestId, approve });
         } finally {
             setResolving(null);
+        }
+    };
+
+    // Downloads the company's full data as a bundle for Cascabel's operator console.
+    const handleExport = async (company: { userId: string; companyName?: string }) => {
+        setExporting(company.userId);
+        try {
+            const bundle = await exportForCascabel({ userId: company.userId });
+            const slug = (company.companyName || "company").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            downloadBlob(
+                new Blob([JSON.stringify(bundle)], { type: "application/json" }),
+                `buildflow-export-${slug}-${dateStamp()}.json`
+            );
+        } catch (err) {
+            alert(`Export failed: ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setExporting(null);
         }
     };
 
@@ -257,6 +277,14 @@ export default function AdminPage() {
                                                 <StatPill icon={FileText} value={s_stats.invoices} label="invoices" />
                                                 <StatPill icon={Users} value={s_stats.clients} label="clients" />
                                             </div>
+                                            <button
+                                                onClick={() => handleExport(s)}
+                                                disabled={exporting !== null}
+                                                className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 hover:text-sky-700 disabled:opacity-50 transition-colors"
+                                            >
+                                                <Download size={12} />
+                                                {exporting === s.userId ? "Exporting…" : "Export for Cascabel"}
+                                            </button>
                                         </div>
                                     </div>
                                 );

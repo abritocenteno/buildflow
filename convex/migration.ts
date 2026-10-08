@@ -1,7 +1,8 @@
 /**
  * One-off export of a user's data for the move to Cascabel.
  *
- * Internal only — run from the CLI, never reachable from the browser:
+ * Run from the admin panel ("Export for Cascabel" on a company), which calls
+ * exportForCascabel, or from the CLI:
  *
  *   npx convex run --prod migration:listOwners
  *   npx convex run --prod migration:exportUser '{"userId":"<tokenIdentifier>"}' > bundle.json
@@ -11,7 +12,7 @@
  * writes: the BuildFlow data stays as it is.
  */
 import { v } from "convex/values";
-import { internalAction, internalQuery } from "./_generated/server";
+import { action, internalAction, internalQuery, type ActionCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 /** Tables that belong to a user, in the order the importer needs them. */
@@ -84,25 +85,37 @@ function storageIds(tables: Record<string, any[]>): string[] {
     return [...ids];
 }
 
+async function buildBundle(ctx: ActionCtx, userId: string) {
+    const tables = (await ctx.runQuery(internal.migration.collectRows, { userId })) as Record<string, any[]>;
+    if (tables.settings.length === 0) throw new Error(`No settings for ${userId}`);
+
+    const files: { id: string; url: string | null }[] = [];
+    for (const id of storageIds(tables)) {
+        files.push({ id, url: await ctx.storage.getUrl(id as any) });
+    }
+
+    return {
+        format: "buildflow-export",
+        version: 1,
+        exportedAt: Date.now(),
+        userId,
+        counts: Object.fromEntries(Object.entries(tables).map(([t, rows]) => [t, rows.length])),
+        tables,
+        files,
+    };
+}
+
 export const exportUser = internalAction({
     args: { userId: v.string() },
+    handler: async (ctx, { userId }) => buildBundle(ctx, userId),
+});
+
+/** Admin panel entry point: same bundle, restricted to the admin. */
+export const exportForCascabel = action({
+    args: { userId: v.string() },
     handler: async (ctx, { userId }) => {
-        const tables = (await ctx.runQuery(internal.migration.collectRows, { userId })) as Record<string, any[]>;
-        if (tables.settings.length === 0) throw new Error(`No settings for ${userId}`);
-
-        const files: { id: string; url: string | null }[] = [];
-        for (const id of storageIds(tables)) {
-            files.push({ id, url: await ctx.storage.getUrl(id as any) });
-        }
-
-        return {
-            format: "buildflow-export",
-            version: 1,
-            exportedAt: Date.now(),
-            userId,
-            counts: Object.fromEntries(Object.entries(tables).map(([t, rows]) => [t, rows.length])),
-            tables,
-            files,
-        };
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity || identity.email !== process.env.ADMIN_EMAIL) throw new Error("Unauthorized");
+        return buildBundle(ctx, userId);
     },
 });
