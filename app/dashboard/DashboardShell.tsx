@@ -48,6 +48,22 @@ function SessionRecoveryButton() {
     );
 }
 
+function PoweredBy() {
+    return (
+        <p className="px-3 pt-2 text-xs text-zinc-400">
+            Powered by{" "}
+            <a
+                href="https://prikichilabs.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-zinc-300 underline-offset-2 hover:text-zinc-900 transition-colors"
+            >
+                Prikichi Labs
+            </a>
+        </p>
+    );
+}
+
 const SidebarItem = ({
     icon: Icon,
     label,
@@ -181,6 +197,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             </>
                         )}
                     </button>
+                    {!collapsed && <PoweredBy />}
                 </div>
             </aside>
 
@@ -216,6 +233,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         />
                     ))}
                 </nav>
+                <div className="p-3 border-t border-zinc-100">
+                    <PoweredBy />
+                </div>
             </aside>
 
             {/* Main */}

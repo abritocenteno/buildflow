@@ -364,7 +364,15 @@ export default function LandingPage() {
             <footer className="bg-[#09090b] border-t border-white/5 py-10">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
                     <Logo dark />
-                    <p className="text-xs text-zinc-600">© {new Date().getFullYear()} BuildFlow. All rights reserved.</p>
+                    <div className="text-xs text-zinc-600 text-center sm:text-left space-y-1">
+                        <p>© {new Date().getFullYear()} BuildFlow. All rights reserved.</p>
+                        <p>
+                            Powered by{" "}
+                            <a href="https://prikichilabs.com" target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 underline-offset-2 hover:text-zinc-300 transition-colors">
+                                Prikichi Labs
+                            </a>
+                        </p>
+                    </div>
                     <div className="flex items-center gap-6 text-xs text-zinc-600">
                         <Link href="#" className="hover:text-zinc-300 transition-colors">Privacy</Link>
                         <Link href="#" className="hover:text-zinc-300 transition-colors">Terms</Link>
