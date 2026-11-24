@@ -7,6 +7,9 @@
  *   npx convex run --prod migration:listOwners
  *   npx convex run --prod migration:exportUser '{"userId":"<tokenIdentifier>"}' > bundle.json
  *
+ * Cascabel also pulls the same bundle daily over HTTP (convex/http.ts) to keep
+ * its copy current until the switch.
+ *
  * The bundle keeps the original document ids so the importer can remap
  * references, and lists every stored file with a download URL. Nothing here
  * writes: the BuildFlow data stays as it is.
@@ -85,7 +88,7 @@ function storageIds(tables: Record<string, any[]>): string[] {
     return [...ids];
 }
 
-async function buildBundle(ctx: ActionCtx, userId: string) {
+export async function buildBundle(ctx: ActionCtx, userId: string) {
     const tables = (await ctx.runQuery(internal.migration.collectRows, { userId })) as Record<string, any[]>;
     if (tables.settings.length === 0) throw new Error(`No settings for ${userId}`);
 
